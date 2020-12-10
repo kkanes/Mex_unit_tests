@@ -7,6 +7,8 @@
 //       		 the servos.
 //============================================================================
 #include "TestUnits.hpp"
+#include "SerialCom.hpp"
+#include "Pololu.hpp"
 #include <iostream>
 
 int main()
@@ -20,5 +22,5 @@ int main()
 	//testSetGetMethods();
 
 	//testMEXMovementSetting1();
-    //testMEXMovementSetting2();
+	//testMEXMovementSetting2();
 }
