@@ -64,70 +64,75 @@ public:
     virtual bool writeSerialCom(unsigned char command[], unsigned short sizeCommand, unsigned char *response, unsigned short sizeResponse) = 0;
 };
 
-/** \brief SerialCom is a class that inherits the functions from the ISerialCom interface.
- *  The functionality of the interface is expanded by the function getPort ().
- *
- *  \param portName_ : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
- *  \param baudRate_ : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
- *  \param port_ : If a serial connection is opened successfully, depending on the operating system, a HANDLE (under Windows) or an integer value (under Linux) is defined, via which the communication takes place.
- */
-class SerialCom : public ISerialCom {
-protected:
-	bool isSerialComOpen_ = false;
-    const char* portName_ = nullptr;
-    unsigned short baudRate_ = 0;
-    /**< depending on the operating system, a HANDLE (under Windows) or an integer value (under Linux) for an open connection */
-    #ifdef _WIN32
-        HANDLE port_;
-    #else
-        int port_;
-    #endif
 
 
-public:
 
-    SerialCom(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
-
-
-    void initSerialCom(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
-
-
-    bool openSerialCom();
-
-
-     bool closeSerialCom();
-
-
-    bool writeSerialCom(unsigned char command[], unsigned short sizeCommand, unsigned char *response, unsigned short sizeResponse);
-
-    /** \brief Returns the port HANDLE under Windows or the integer value for the connection under Linux.
-     *
-     *
-     * \return port_
-     */
-    #ifdef _WIN32
-        HANDLE getPort();
-    #else
-        int getPort();
-    #endif
+class SerialBase : public ISerialCom{
+	protected:
+		bool  isSerialComOpen_ = false;
+		const char* portName_ = nullptr;
+		unsigned short baudRate_ = 0;
 };
+
+
+#ifdef _WIN32
+	class SerialComWIN32 : public SerialBase{
+		public:
+				 SerialComWIN32(const char* portName="COM0", unsigned short baudRate=9600);
+			void initSerialCom (const char* portName="COM0", unsigned short baudRate=9600);
+			bool openSerialCom ();
+			bool closeSerialCom();
+			bool writeSerialCom(unsigned char command[], unsigned short sizeCommand, unsigned char *response, unsigned short sizeResponse);
+	        HANDLE getPort();
+		protected:
+	        HANDLE port_;
+	};
+#else
+	class SerialComLINUX : public SerialBase{
+		public:
+				 SerialComLINUX(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
+		    void initSerialCom(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
+		    bool openSerialCom();
+		    bool closeSerialCom();
+		    bool writeSerialCom(unsigned char command[], unsigned short sizeCommand, unsigned char *response, unsigned short sizeResponse);
+		    int  getPort();
+		protected:
+		    int port_;
+	};
+#endif
+
+
+#ifdef _WIN32
+	class SerialCom : public SerialComWIN32{
+	public:
+		SerialCom(const char* portName="COM0",
+				unsigned short baudRate=9600) : SerialComWIN32(portName,baudRate){};
+	};
+#else
+	class SerialCom : public SerialComLINUX{
+	public:
+		SerialCom(const char* portName="/dev/ttyACM0",
+				unsigned short baudRate=9600) : SerialComLINUX(portName,baudRate){};
+	};
+#endif
+
 
 
 class IException{
-public:
-	virtual string getMsg() = 0;
+	public:
+		virtual string getMsg() = 0;
 };
 
 class ExceptionSerialCom : public IException{
-public:
-	ExceptionSerialCom(string msg){
-		msg_ = string("ExceptionSerialCom::") + msg;
-	};
-	string getMsg(){return msg_;}
-protected:
-	string msg_;
-private:
-	ExceptionSerialCom(){};
+	public:
+		ExceptionSerialCom(string msg){
+			msg_ = string("ExceptionSerialCom::") + msg;
+		};
+		string getMsg(){return msg_;}
+	protected:
+		string msg_;
+	private:
+		ExceptionSerialCom(){};
 };
 
 
