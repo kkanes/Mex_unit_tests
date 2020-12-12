@@ -10,16 +10,32 @@
 #include "../ServoMotor.hpp"
 #include "./TestUnits.hpp"
 
+using namespace std;
+
 int main(){
-	//Einzeltest
-	//testSerialCom();
-	//testPololu();
 
-	//testOpenClose();
+	SerialCom a;
+	a.openSerialCom();
+	try{
+		a.initSerialCom();
+	}catch(IException *e){
+		cout << "PASSED\n";
+		cout <<"LOG:" <<  e->getMsg() << endl;
+	}catch(...){
+		cout << "FAILED\n";
+	}
 
-	//testSetGetMethods();
 
-	//testMEXMovementSetting1();
-	//testMEXMovementSetting2();
+	SerialCom b;
+	b.openSerialCom();
+	try{
+		b.openSerialCom();
+	}catch(IException *e){
+		cout << "PASSED\n";
+		cout << "LOG:" << e->getMsg() << endl;
+	}catch(...){
+		cout << "FAILED\n";
+	}
+
 }
 

@@ -185,12 +185,8 @@
     		try{
     			/**< Before a serial connection is reinitialized, a possible open connection is closed. */
     			if(isSerialComOpen_){
-    				#ifdef _WIN32
-    					CloseHandle(port_);
-    	    		#else
-    					close(port_);
-    	    		#endif
-    					isSerialComOpen_ = false;
+        			string msg("initSerialCom:: port is already open, close port first before initialization.");
+        			throw new ExceptionSerialCom(msg);
     			};
     			portName_ = portName;
     			baudRate_ = baudRate;
@@ -217,25 +213,26 @@
     	bool SerialComLINUX::openSerialCom(){
     		bool success = false;
 
+    		if(isSerialComOpen_){
+    			string msg("openSerialCom:: port is already open, close port first before open it.");
+    			throw new ExceptionSerialCom(msg);
+    		}
+
     		/**< Opens a serial connection using the CreateFileA function from <windows.h>. Port_ is
              	 opened with read and write access. */
-    		try{
-    			port_ = open(portName_, O_RDWR | O_NOCTTY); //you have to set the permission for the /dev/ttyACM0
-    			if (port_ == -1){
-    				string msg = string("openSerialCom: LINUX Failed to open port '") + string(portName_) + string("'.");
-    				throw new ExceptionSerialCom(msg);
-    			}
-    		}catch(...){
-    			string msg("openSerialCom: LINUX unknown Error while open serial port '");
+    		port_ = open(portName_, O_RDWR | O_NOCTTY); //you have to set the permission for the /dev/ttyACM0
+    		if (port_ == -1){
+    			string msg("openSerialCom: LINUX cannot open port '");
     			msg += string(portName_) + string("'.");
     			throw new ExceptionSerialCom(msg);
     		}
+
     		/**< Flushes the file buffer of the opened connection. */
     		success = tcflush(port_, TCIOFLUSH);
     		if (success){
-    			throw std::string("SerialCom::openSerialCom: Failed to flush file buffer.\n");
     			close(port_);
-    			return 0;
+    			string msg("SerialCom::openSerialCom: Failed to flush file buffer.");
+    			throw new ExceptionSerialCom(msg);
     		}
     		// Get the current configuration of the serial port.
     		struct termios options;
@@ -266,6 +263,8 @@
     			close(port_);
     			return false;
     		}
+
+    		isSerialComOpen_ = true;
     		return true;
     	};
 
