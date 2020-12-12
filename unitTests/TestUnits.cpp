@@ -4,9 +4,9 @@
 //
 // Description :
 //============================================================================
-#include "Pololu.hpp"
-#include "SerialCom.hpp"
-#include "ServoMotor.hpp"
+#include "../Pololu.hpp"
+#include "../SerialCom.hpp"
+#include "../ServoMotor.hpp"
 #include <string>
 #include <iostream>
 #include <cmath>
@@ -147,9 +147,9 @@ void testSetGetMethods (){
 	//
 	// For example:
 	// Pololu values for the servo channel settings at port 2:
-	// Min:          520 µs
-	// Max:          2320 µs
-	// 8bit neutral: 1420 µs
+	// Min:          520 ï¿½s
+	// Max:          2320 ï¿½s
+	// 8bit neutral: 1420 ï¿½s
 	SG_90_1.showPololuValues(servoMin, servoMid, servoMax);
 	cout << "Pololu values for the servo channel settings at port " << SG_90_1.getServoNumber() << ":" << endl;
 	cout << "Min:          " << servoMin << endl;
@@ -496,12 +496,12 @@ void testSerialCom(){
 	SerialCom serialCom1;
 	SerialCom serialCom2("COM4", 9600);
 
-	if (serialCom1.getPort() == NULL){
+	if (serialCom1.getPort() == 0){
 		cout << "COM1: No port established" << endl;
 	}else{
 		cout << "COM1: " << serialCom1.getPort() << endl;
 	}
-	if (serialCom2.getPort() == NULL){
+	if (serialCom2.getPort() == 0){
 		cout << "COM2: No port established" << endl;
 	}else{
 		cout << "COM2: " << serialCom2.getPort() << endl;

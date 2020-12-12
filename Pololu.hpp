@@ -10,15 +10,51 @@
 
 #include "SerialCom.hpp"
 
+
 /** \brief Interface to control a Pololu controller. The interface
  *  provides the basic functions for the control of servo motors.
  *
  */
 class IPololu {
 protected:
+
+    /** \brief Funktion is used to move a specific servo to a new position.
+    *
+    *  \param servo = Servo to move
+    *  \param goToPosition = New position to be approached. The value for the new position is calculated from the position in microseconds times 4 (e.g. new position should be 1500 microseconds, then 6000 must be set in the function as new position)
+    *
+    *  \return The return value of the function is 1 if the new position was successfully set and 0 if an error occurred.
+    *
+    */
 	virtual bool setPosition(unsigned short servo, unsigned short goToPosition) = 0;
+
+    /** \brief Function is used to set the speed for a servo with which it should move.
+    *
+    *  \param servo = Servo to set speed
+    *  \param goToSpeed = Speed of the servo (speed value 1 = 0.25us / 10ms or speed value 100 = 25us / 10ms). A speed value of 0 means infinite speed, i.e. the maximum speed of the servo.
+    *
+    *  \return The return value of the function is 1 if the new speed was successfully set and 0 if an error occurred.
+    *
+    */
 	virtual bool setSpeed(unsigned short servo, unsigned short goToSpeed) = 0;
+
+    /** \brief Function is used to set the acceleration for a servo with which it should reach the set speed.
+    *
+    *  \param servo = Servo to set acceleration
+    *  \param goToAcceleration = Acceleration of the servo (acceleration value 1 = 0.25us / 10ms / 80ms or speed value 100 = 25us / 10ms / 80ms). A speed value of 0 means infinite acceleration, i.e. the maximum acceleration of the servo.
+    *
+    *  \return The return value of the function is 1 if the new acceleration was successfully set and 0 if an error occurred.
+    *
+    */
 	virtual bool setAcceleration(unsigned short servo, unsigned short goToAcceleration) = 0;
+
+    /** \brief Function is used to read out the current position of a particular servo.
+    *
+    * 	\param servo = Servo whose current position is to be read out.
+    *
+    *	\return The return value is the current position of the selected servo. The position value supplied by the controller must still be multiplied by 4.
+    *
+    */
 	virtual unsigned short getPosition(unsigned short servo) = 0;
 public:
 	virtual ~IPololu(){};
@@ -33,46 +69,13 @@ public:
 class Pololu : public IPololu {
 friend class ServoMotor;
 protected:
-    SerialCom serialCom;
+    SerialCom serialCom_;
 
-    /** \brief Funktion is used to move a specific servo to a new position.
-    *
-    *  \param servo = Servo to move
-    *  \param goToPosition = New position to be approached. The value for the new position is calculated from the position in microseconds times 4 (e.g. new position should be 1500 microseconds, then 6000 must be set in the function as new position)
-    *
-    *  \return The return value of the function is 1 if the new position was successfully set and 0 if an error occurred.
-    *
-    */
     bool setPosition(unsigned short servo, unsigned short goToPosition);
-
-    /** \brief Function is used to set the speed for a servo with which it should move.
-    *
-    *  \param servo = Servo to set speed
-    *  \param goToSpeed = Speed of the servo (speed value 1 = 0.25us / 10ms or speed value 100 = 25us / 10ms). A speed value of 0 means infinite speed, i.e. the maximum speed of the servo.
-    *
-    *  \return The return value of the function is 1 if the new speed was successfully set and 0 if an error occurred.
-    *
-    */
     bool setSpeed(unsigned short servo, unsigned short goToSpeed);
-
-    /** \brief Function is used to set the acceleration for a servo with which it should reach the set speed.
-    *
-    *  \param servo = Servo to set acceleration
-    *  \param goToAcceleration = Acceleration of the servo (acceleration value 1 = 0.25us / 10ms / 80ms or speed value 100 = 25us / 10ms / 80ms). A speed value of 0 means infinite acceleration, i.e. the maximum acceleration of the servo.
-    *
-    *  \return The return value of the function is 1 if the new acceleration was successfully set and 0 if an error occurred.
-    *
-    */
     bool setAcceleration(unsigned short servo, unsigned short goToAcceleration);
-
-    /** \brief Function is used to read out the current position of a particular servo.
-    *
-    * 	\param servo = Servo whose current position is to be read out.
-    *
-    *	\return The return value is the current position of the selected servo. The position value supplied by the controller must still be multiplied by 4.
-    *
-    */
     unsigned short getPosition(unsigned short servo);
+
 public:
     /** \brief Constructor executes serialCom.initSerialCom to initialize the serial connection. An object of the Pololu class must be
      *  initialized with the port name and baud rate using the constructor.
@@ -106,6 +109,19 @@ public:
      *
      */
     bool getMovingState();
+};
+
+
+class ExceptionPololu : public IException{
+public:
+	ExceptionPololu(string msg){
+		msg_ = string("ExceptionPololu::") + msg;
+	};
+	string getMsg(){return msg_;}
+protected:
+	string msg_;
+private:
+	ExceptionPololu(){};
 };
 
 #endif // POLOLU_HPP_INCLUDED

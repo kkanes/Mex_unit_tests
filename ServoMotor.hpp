@@ -49,9 +49,9 @@ private:
 	const short minSpeed = 1;				//minimum value for the speed
 	const short minAcceleration = 1;  //minimum value for the acceleration
 	const short conFactorDegToPos = 10;	    //conversion factor from degrees to position
-	const short conFactorMyToPos = 4;		//conversion factor to convert µs (position value of a servo) to position values
+	const short conFactorMyToPos = 4;		//conversion factor to convert ï¿½s (position value of a servo) to position values
 	unsigned short servoNumber_;
-	unsigned short startingPosition_;	//startPosition is the center position of a servo, in most cases it is value of 6000 (1500µs * 4)
+	unsigned short startingPosition_;	//startPosition is the center position of a servo, in most cases it is value of 6000 (1500ï¿½s * 4)
 	unsigned short delta_;
 	Pololu *connection_ = NULL;
 public:
@@ -162,5 +162,18 @@ public:
 	 */
 	void showPololuValues (unsigned short& min, unsigned short& mid, unsigned short& max);
 };
+
+class ExceptionServerMotor : public IException{
+public:
+	ExceptionServerMotor(string msg){
+		msg_ = string("ExceptionServoMotor::") + msg;
+	};
+	string getMsg(){return msg_;}
+protected:
+	string msg_;
+private:
+	ExceptionServerMotor(){};
+};
+
 
 #endif /* SERVOMOTOR_HPP_ */

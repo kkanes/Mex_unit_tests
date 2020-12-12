@@ -20,22 +20,9 @@
 	#include <stdbool.h>
 #endif
 
-/** \brief Constructors: A constructor without transfer parameters, so that when used in the Pololu class
- *  or another class, an object of type SerialCom can be created without having to pass values to it.
- *  And a constructor for creating an object with start parameters for the port name and the baud rate.
- *
- *  \param portName : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
- *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
- */
-SerialCom::SerialCom(){
-	portName_ = "";
-	baudRate_ = 0;
-	#ifdef _WIN32
-		port_ = NULL;
-	#else
-		port_ = 0;
-	#endif
-}
+
+
+
 SerialCom::SerialCom(const char* portName, unsigned short baudRate){
 	portName_ = portName;
 	baudRate_ = baudRate;
@@ -44,6 +31,8 @@ SerialCom::SerialCom(const char* portName, unsigned short baudRate){
 	#else
 		port_ = 0;
 	#endif
+
+	return;
 }
 
 /** \brief "initSerialCom" is used to initiate the SerialCom object with port name and baud rate.
@@ -54,14 +43,22 @@ SerialCom::SerialCom(const char* portName, unsigned short baudRate){
  *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
  */
 void SerialCom::initSerialCom(const char* portName, unsigned short baudRate){
-    /**< Before a serial connection is reinitialized, a possible open connection is closed. */
-    #ifdef _WIN32
-        CloseHandle(port_);
-    #else
-        close(port_);
-    #endif
-    portName_ = portName;
-    baudRate_ = baudRate;
+	try{
+		/**< Before a serial connection is reinitialized, a possible open connection is closed. */
+		if(isSerialComOpen_){
+			#ifdef _WIN32
+				CloseHandle(port_);
+    		#else
+				close(port_);
+    		#endif
+				isSerialComOpen_ = false;
+		}
+		portName_ = portName;
+		baudRate_ = baudRate;
+	}catch(...){
+		throw new ExceptionSerialCom("initSerialCom::Error while closing an open serial connection.");
+	}
+    return;
 }
 
 /** \brief Uses the set port name and the baud rate of the class to open a serial connection.
@@ -73,25 +70,26 @@ void SerialCom::initSerialCom(const char* portName, unsigned short baudRate){
 bool SerialCom::openSerialCom(){
     #ifdef _WIN32
         /**< Opening a serial connection in windows. */
-        bool success = FALSE;
+        bool success = false;
         DCB state;
 
         /**< If there is still an open connection, it will be closed before opening it again. */
-        CloseHandle(port_);
+        if(isSerialComOpen_){
+        	CloseHandle(port_);
+        	isSerialComOpen_ = false;
+        }
         /**< Opens a serial connection using the CreateFileA function from <windows.h>. Port_ is
         opened with read and write access. */
         port_ = CreateFileA(portName_, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if (port_ == INVALID_HANDLE_VALUE){
-            throw std::string("SerialCom::openSerialCom: Failed to open port.\n");
-            return 0;
+        	throw new ExceptionSerialCom(string(openSerialCom: Failed to open port.));
         }
         /**< Flushes the file buffer of the opened connection. */
         success = FlushFileBuffers(port_);
         if (!success)
         {
-            throw std::string("SerialCom::openSerialCom: Failed to flush file buffer.\n");
-            CloseHandle(port_);
-            return 0;
+        	CloseHandle(port_);
+        	throw new ExceptionSerialCom(string("openSerialCom: WIN32 Failed to flush file buffer."));
         }
         /**< Configure read and write operations to time out after 100 ms. */
         COMMTIMEOUTS timeouts = { 0 };
@@ -103,40 +101,50 @@ bool SerialCom::openSerialCom(){
         success = SetCommTimeouts(port_, &timeouts);
         if (!success)
         {
-            throw std::string("SerialCom::openSerialCom: Failed to set serial timeouts.\n");
-            CloseHandle(port_);
-            return 0;
+        	CloseHandle(port_);
+        	throw new ExceptionSerialCom(string("openSerialCom: WIN32 Failed to set serial timeouts."));
         }
+
         /**< Reads the connection status of the serial connection. If the reading of
         the connection status was successful, the baud rate for the communication is set. */
         state.DCBlength = sizeof(DCB);
         success = GetCommState(port_, &state);
         if (!success)
         {
-            throw std::string("SerialCom::openSerialCom: Failed to get serial settings.\n");
-            CloseHandle(port_);
-            return 0;
+        	CloseHandle(port_);
+        	throw new ExceptionSerialCom(string("openSerialCom: WIN32 Failed to get serial settings.");
         }
         state.BaudRate = baudRate_;
         success = SetCommState(port_, &state);
         if (!success)
         {
-            throw std::string("SerialCom::openSerialCom: Failed to set serial settings.\n");
-            CloseHandle(port_);
-            return 0;
+        	CloseHandle(port_);
+        	throw new ExceptionSerialCom(string("openSerialCom: WIN32 Failed to set serial settings.");
         }
-        return 1;
+
+        isSerialComOpen_ = true;
+        return isSerialComOpen_;
     #else
         bool success = false;
 
         /**< If there is still an open connection, it will be closed before opening it again. */
-        close(port_);
+        if(isSerialComOpen_){
+        	close(port_);
+        	isSerialComOpen_ = false;
+        }
+
         /**< Opens a serial connection using the CreateFileA function from <windows.h>. Port_ is
              opened with read and write access. */
-        port_ = open(portName_, O_RDWR | O_NOCTTY); //you have to set the permission for the /dev/ttyACM0
-        if (port_ == -1){
-        	throw std::string("SerialCom::openSerialCom: Failed to open port.\n");
-            return 0;
+        try{
+        	port_ = open(portName_, O_RDWR | O_NOCTTY); //you have to set the permission for the /dev/ttyACM0
+        	if (port_ == -1){
+        		string msg = string("openSerialCom: LINUX Failed to open port '") + string(portName_) + string("'.");
+        		throw new ExceptionSerialCom(msg);
+        	}
+        }catch(...){
+        	string msg("openSerialCom: LINUX unknown Error while open serial port '");
+        	msg += string(portName_) + string("'.");
+        	throw new ExceptionSerialCom(msg);
         }
         /**< Flushes the file buffer of the opened connection. */
         success = tcflush(port_, TCIOFLUSH);

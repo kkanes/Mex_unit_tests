@@ -8,6 +8,7 @@
 #include "ServoMotor.hpp"
 #include "Pololu.hpp"
 #include <iostream>
+#include <sstream>
 #include <cmath>
 
 /** \brief ServoMotor class constructor. An object of the ServoMotor type must be initiated via the constructor.
@@ -142,7 +143,30 @@ bool ServoMotor::setAccelaration(unsigned short newAcceleration){
  *
  */
 unsigned short ServoMotor::getPositionInAbs(){
-	return connection_->getPosition(servoNumber_);
+	try{
+		unsigned short v = connection_->getPosition(servoNumber_);
+		return v;
+	}catch(ExceptionSerialCom *e){
+		stringstream  ss;
+		ss << "getPositionInAbs:: Error while execution getPositon for port '";
+		ss << servoNumber_ << "'.";
+		throw new ExceptionServerMotor(e->getMsg() + ss.str());
+	}catch(ExceptionPololu *e){
+		stringstream  ss;
+		ss << "getPositionInAbs:: Error while execution getPositon for port '";
+		ss << servoNumber_ << "'.";
+		throw new ExceptionServerMotor(e->getMsg() + ss.str());
+	}catch(string msg){
+		stringstream  ss;
+		ss << "getPositionInAbs:: string error while execution getPositon for port '";
+		ss << servoNumber_ << "'.";
+		throw new ExceptionServerMotor(msg + ss.str());
+	}catch(...){
+		stringstream  ss;
+		ss << "getPositionInAbs:: Unknown Error while execution getPositon for port '";
+		ss << servoNumber_ << "'.";
+		throw new ExceptionServerMotor(ss.str());
+	}
 }
 
 /** \brief Returns the position of the servo in degrees.

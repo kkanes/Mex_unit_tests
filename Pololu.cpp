@@ -17,7 +17,9 @@
  *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
  *
  */
-Pololu::Pololu(const char* portName, unsigned short baudRate){serialCom.initSerialCom(portName, baudRate);}
+Pololu::Pololu(const char* portName, unsigned short baudRate){
+	serialCom_.initSerialCom(portName, baudRate);
+}
 
 /** \brief Function is used to open the serial connection. Function only calls
  * the openSerialCom function of the serialCom object.
@@ -27,12 +29,15 @@ Pololu::Pololu(const char* portName, unsigned short baudRate){serialCom.initSeri
  */
 bool Pololu::openConnection(){
     try{
-        serialCom.openSerialCom();
+        serialCom_.openSerialCom();
+        return 1;
+    }catch(ExceptionSerialCom  *e){
+    	throw new ExceptionPololu(string("openConnection::") + e->getMsg());
     }catch (std::string &errorMessage){
-        std::cout << errorMessage;
-        return 0;
+    	throw new ExceptionPololu(string("openConnection::") + errorMessage);
+    }catch(...){
+    	throw new ExceptionPololu(string("openConnection::Unknown error while openSerial"));
     }
-    return 1;
 }
 
 /** \brief Function is used to close the serial connection. Function only calls
@@ -43,7 +48,7 @@ bool Pololu::openConnection(){
  */
 bool Pololu::closeConnection(){
     try{
-        serialCom.closeSerialCom();
+        serialCom_.closeSerialCom();
     }catch (std::string &errorMessage){
         std::cout << errorMessage;
         return 0;
@@ -57,7 +62,7 @@ bool Pololu::closeConnection(){
  *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
  *
  */
-void Pololu::initConnection(const char* portName, unsigned short baudRate){serialCom.initSerialCom(portName, baudRate);}
+void Pololu::initConnection(const char* portName, unsigned short baudRate){serialCom_.initSerialCom(portName, baudRate);}
 
 /** \brief Funktion is used to move a specific servo to a new position.
  *
@@ -77,7 +82,7 @@ bool Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
     unsigned char command[] = {0x84, (unsigned char)servo, (unsigned char)(goToPosition & 0x7F), (unsigned char)((goToPosition >> 7) & 0x7F)};
     try
     {
-        serialCom.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -110,7 +115,7 @@ bool Pololu::setSpeed(unsigned short servo, unsigned short goToSpeed){
     unsigned char command[] = {0x87, (unsigned char)servo, (unsigned char)(goToSpeed & 0x7F), (unsigned char)((goToSpeed >> 7) & 0x7F)};
     try
     {
-        serialCom.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -144,7 +149,7 @@ bool Pololu::setAcceleration(unsigned short servo, unsigned short goToAccelerati
     unsigned char command[] = {0x89, (unsigned char)servo, (unsigned char)(goToAcceleration & 0x7F), (unsigned char)((goToAcceleration >> 7) & 0x7F)};
     try
     {
-        serialCom.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -178,7 +183,7 @@ unsigned short Pololu::getPosition(unsigned short servo){
     unsigned char command[] = {0x90, (unsigned char)servo};
     try
     {
-        serialCom.writeSerialCom(command, sizeCommand, response, sizeResponse);
+        serialCom_.writeSerialCom(command, sizeCommand, response, sizeResponse);
     }
     catch (std::string &errorMessage)
     {
@@ -208,7 +213,7 @@ bool Pololu::getMovingState(){
     unsigned char command[] = {0x93};
     try
     {
-        serialCom.writeSerialCom(command, sizeCommand, response, sizeResponse);
+        serialCom_.writeSerialCom(command, sizeCommand, response, sizeResponse);
     }
     catch (std::string &errorMessage)
     {
