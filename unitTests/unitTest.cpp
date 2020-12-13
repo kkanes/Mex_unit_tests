@@ -14,27 +14,35 @@ using namespace std;
 
 int main(){
 
-	SerialCom a;
-	a.openSerialCom();
 	try{
-		a.initSerialCom();
-	}catch(IException *e){
-		cout << "PASSED\n";
-		cout <<"LOG:" <<  e->getMsg() << endl;
-	}catch(...){
-		cout << "FAILED\n";
-	}
 
 
-	SerialCom b;
-	b.openSerialCom();
-	try{
+		SerialCom a;
+		a.openSerialCom();
+		try{
+			a.initSerialCom();
+		}catch(IException *e){
+			cout << "PASSED\n";
+			cout <<"LOG:" <<  e->getMsg() << endl;
+		}catch(...){
+			cout << "FAILED\n";
+		}
+
+
+		SerialCom b;
 		b.openSerialCom();
+		try{
+			b.openSerialCom();
+		}catch(IException *e){
+			cout << "PASSED\n";
+			cout << "LOG:" << e->getMsg() << endl;
+		}catch(...){
+			cout << "FAILED\n";
+		}
 	}catch(IException *e){
-		cout << "PASSED\n";
-		cout << "LOG:" << e->getMsg() << endl;
+		cout << "unintended IException error:" <<e->getMsg() << " Stop testing.\n";
 	}catch(...){
-		cout << "FAILED\n";
+		cout << "unintended error. stop testing.\n";
 	}
 
 }

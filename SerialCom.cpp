@@ -174,6 +174,7 @@
     	 */
     	SerialComLINUX::SerialComLINUX(const char* portName,
     									unsigned short baudRate){
+    		isSerialComOpen_ = false;
     		portName_ = portName;
     		baudRate_ = baudRate;
     		port_ = 0;
@@ -211,37 +212,40 @@
     	};
 
     	bool SerialComLINUX::openSerialCom(){
-    		bool success = false;
+    		int success = -1;
 
     		if(isSerialComOpen_){
     			string msg("openSerialCom:: port is already open, close port first before open it.");
     			throw new ExceptionSerialCom(msg);
     		}
 
-    		/**< Opens a serial connection using the CreateFileA function from <windows.h>. Port_ is
-             	 opened with read and write access. */
-    		port_ = open(portName_, O_RDWR | O_NOCTTY); //you have to set the permission for the /dev/ttyACM0
+    		port_ = open(portName_, O_RDWR | O_NOCTTY); //success requires  permission for the /dev/ttyACM0
     		if (port_ == -1){
-    			string msg("openSerialCom: LINUX cannot open port '");
+    			string msg("openSerialCom: LINUX cannot open port, check permission of '");
     			msg += string(portName_) + string("'.");
     			throw new ExceptionSerialCom(msg);
     		}
 
+    		cout << "port successfully opened, port numver is: " << port_ << " port name is '" << portName_ << "'\n\n";
+
     		/**< Flushes the file buffer of the opened connection. */
-    		success = tcflush(port_, TCIOFLUSH);
-    		if (success){
+    		success = tcflush(port_, TCIOFLUSH); // function delivers value 0 on success, -1 otherwise
+    		if (success != 0){
     			close(port_);
-    			string msg("SerialCom::openSerialCom: Failed to flush file buffer.");
+    			string msg("SerialCom::openSerialCom: Failed to flush file buffer. Close port again.");
     			throw new ExceptionSerialCom(msg);
     		}
+
     		// Get the current configuration of the serial port.
     		struct termios options;
     		success = tcgetattr(port_, &options);
-    		if (success){
-    			throw std::string("SerialCom::openSerialCom: Failed to get serial settings.\n");
+    		if (success != 0){
     			close(port_);
-    			return 0;
+    			string msg("SerialCom::openSerialCom: Failed to read serial settings.");
+    			msg += string(portName_) + string(" setting cannot be read. Port closed again.");
+    			throw new ExceptionSerialCom(msg);
     		}
+
     		// Turn off any options that might interfere with our ability to send and
     		// receive raw binary bytes.
     		options.c_iflag &= ~(INLCR | IGNCR | ICRNL | IXON | IXOFF);
@@ -258,10 +262,11 @@
     		cfsetospeed(&options, B9600);
     		cfsetispeed(&options, cfgetospeed(&options));
     		success = tcsetattr(port_, TCSANOW, &options);
-    		if (success){
-    			throw std::string("SerialCom::openSerialCom: Failed to set serial settings.\n");
-    			close(port_);
-    			return false;
+    		if (success != 0){
+       			close(port_);
+    			string msg("SerialCom::openSerialCom: Failed to set serial settings.");
+    			msg += string(portName_) + string(" parameters cannot be written. Port closed again.");
+    			throw new ExceptionSerialCom(msg);
     		}
 
     		isSerialComOpen_ = true;
@@ -269,7 +274,11 @@
     	};
 
     	bool SerialComLINUX::closeSerialCom(){
-    		return close(port_);
+    		if(isSerialComOpen_){
+    			close(port_);
+    		}
+    		isSerialComOpen_ = false;
+     		return true;
     	};
 
     	bool SerialComLINUX::writeSerialCom(unsigned char cmd[],
@@ -277,30 +286,40 @@
     										unsigned char *res,
     										unsigned short sizeRes){
 
-
+    		// check parameter values of this function call
     		if ((sizeCmd != 1) && (sizeCmd != 2) && (sizeCmd != 4)){
-    			throw std::string("SerialCom::writeSerialCom: wrong parameter sizeCommand, allowed parameter 1,2 or 4.");
+    			string msg("SerialCom::writeSerialCom: wrong parameter sizeCommand,");
+    			msg += string("allowed parameter values are either 1,2 or 4.");
+    			throw new ExceptionSerialCom(msg);
     		}
 
     		//** Sending the command to the controller via port_. */
     		if(write(port_, cmd, sizeCmd) == -1){
-    			throw std::string("SerialCom::writeSerialCom: Failed to write to port.");
-    			return 0;
+    			string msg("SerialCom::writeSerialCom: Failed to write to port '");
+    			msg += string(portName_) + string("'.");
+    			throw new ExceptionSerialCom(msg);
     		}
     		//** Check whether data needs to be read. */
     		if (sizeRes > 0){
     			if(read(port_, (void *)res, sizeRes) != sizeRes){
-    				throw std::string("SerialCom::writeSerialCom: Failed to read from port.");
-    				return 0;
+        			string msg("SerialCom::writeSerialCom: Failed to read from port '");
+        			msg += string(portName_) + string("'.");
+        			throw new ExceptionSerialCom(msg);
     			}
-    		}else{
-    			return true;
-    		}
+    		};
+
     		return true;
     	};
 
     	int  SerialComLINUX::getPort(){
-    		return port_;
+    		if(isSerialComOpen_){
+    			return port_;
+    		};
+
+    		string msg("SerialCom::getPort: Cannot provide port number '");
+    		msg += string(portName_) + string("' is not open yet.");
+    		msg += string ("Open port first before calling this methode.");
+    		throw new ExceptionSerialCom(msg);
     	};
 
 #endif // LINUX: end definition of methods
