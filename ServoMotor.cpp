@@ -20,7 +20,7 @@
  *
  * */
 ServoMotor::ServoMotor(unsigned short servo, unsigned short startingPosition, unsigned short delta, Pololu *connection){
-	servoNumber_ = servo-1;
+	servoNumber_ = servo;
 	startingPosition_ = startingPosition;
 	delta_ = delta;
 	connection_ = connection;
@@ -32,7 +32,7 @@ ServoMotor::ServoMotor(unsigned short servo, unsigned short startingPosition, un
  *
  */
 unsigned short ServoMotor::getServoNumber(){
-	return servoNumber_+1;
+	return servoNumber_;
 }
 
 /** \brief Returns the minimum position the servo is able to reach.
@@ -148,22 +148,22 @@ unsigned short ServoMotor::getPositionInAbs(){
 		return v;
 	}catch(ExceptionSerialCom *e){
 		stringstream  ss;
-		ss << "getPositionInAbs:: Error while execution getPositon for port '";
+		ss << "getPositionInAbs:: Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
 		throw new ExceptionServerMotor(e->getMsg() + ss.str());
 	}catch(ExceptionPololu *e){
 		stringstream  ss;
-		ss << "getPositionInAbs:: Error while execution getPositon for port '";
+		ss << "getPositionInAbs:: Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
 		throw new ExceptionServerMotor(e->getMsg() + ss.str());
 	}catch(string msg){
 		stringstream  ss;
-		ss << "getPositionInAbs:: string error while execution getPositon for port '";
+		ss << "getPositionInAbs:: string error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
 		throw new ExceptionServerMotor(msg + ss.str());
 	}catch(...){
 		stringstream  ss;
-		ss << "getPositionInAbs:: Unknown Error while execution getPositon for port '";
+		ss << "getPositionInAbs:: Unknown Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
 		throw new ExceptionServerMotor(ss.str());
 	}

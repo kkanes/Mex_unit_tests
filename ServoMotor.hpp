@@ -66,8 +66,11 @@ public:
 	ServoMotor(unsigned short servo, unsigned short startingPosition, unsigned short delta, Pololu *connection);
 
 	/** \brief Returns the port to which the servo is connected to the controller board.
+	 *         Be aware that API counting of the servo number starts at 0, while counting
+	 *         on the board starts at 1. Thus, board connector 1 is servo motor number 0
+	 *         in the API.
 	 *
-	 *  \return The return value is the servoNumber+1 because the internal counting of the controller starts at 0.
+	 *  \return The return value servoNumber.
 	 *
 	 */
 	unsigned short getServoNumber();

@@ -189,6 +189,10 @@ unsigned short Pololu::getPosition(unsigned short servo){
     {
         throw std::string("Pololu::getPosition: " + errorMessage);
     }
+    catch(IException *e)
+    {
+    	throw new ExceptionPololu("Pololu::getPosition: " + e->getMsg());
+    }
     catch(...)
     {
         throw std::string("Pololu::getPosition: Unknown error, while writing/reading to port.");

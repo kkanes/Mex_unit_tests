@@ -20,9 +20,15 @@
 
 using namespace std;
 
-/** \brief Interface for a serial connection via a COM port
- *  Prescribes at least the included pure virtual functions for initiating,
- *  opening, closing and writing a serial connection.
+/**
+ *
+ * \class SerialCom
+ *
+ *  \brief Interface for a serial connection via serial port.
+ *  The implementation of this communication requires the
+ *  configuration setting of the Pololu as "USB Dual Port"
+ *  (see also https://www.pololu.com/docs/0J40/5.a).
+ *
  */
 class ISerialCom {
 public:
@@ -113,21 +119,61 @@ class SerialBase : public ISerialCom{
 	public:
 		SerialCom(const char* portName="/dev/ttyACM0",
 				unsigned short baudRate=9600) : SerialComLINUX(portName,baudRate){};
+		~SerialCom(){
+				this->closeSerialCom();
+		};
 	};
 #endif
 
 
-
+/**
+ *
+ * \class IException
+ *
+ * \brief Interface for exceptions to be overwritten
+ * by the derived classes.
+ *
+ */
 class IException{
 	public:
+
+		/**
+		 *
+		 * \return string error messages
+		 *
+		 */
 		virtual string getMsg() = 0;
 };
 
+
+/**
+ *
+ * \class ExceptionSerialCom
+ *
+ * \brief Exception class for class \ref SerialCom
+ *
+ *
+ */
 class ExceptionSerialCom : public IException{
 	public:
+
+		/**
+		 *
+		 * \brief Constructor of the class
+		 *
+		 * \param string error message
+		 *
+		 */
 		ExceptionSerialCom(string msg){
 			msg_ = string("ExceptionSerialCom::") + msg;
 		};
+
+		/**
+		 * Returns the error message.
+		 *
+		 * \return string containing the error message
+		 *
+		 */
 		string getMsg(){return msg_;}
 	protected:
 		string msg_;

@@ -26,16 +26,10 @@ int main()
 		ServoMotor arm_0(0, 6240, 3600, &conn);
 		cout << "max. pos.: " << arm_0.getMaxPos() << endl;
 		cout << "min. pos.: " << arm_0.getMinPos() << endl;
-		cout << "curr. pos.: " << arm_0.getPositionInAbs() << endl;
+		cout << "get current pos.: "  << arm_0.getPositionInAbs() << endl;
 
-		return 0;
+		arm_0.setPositionInAbs(6000);
 
-		while(1){
-
-			//arm_0.setPositionInAbs(3000);
-
-			//arm_0.setPositionInAbs(8000);
-		}
 		conn.closeConnection();
 	}catch(IException *e){
 		cout << e->getMsg() << endl;

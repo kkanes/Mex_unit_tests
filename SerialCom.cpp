@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -226,8 +227,6 @@
     			throw new ExceptionSerialCom(msg);
     		}
 
-    		cout << "port successfully opened, port numver is: " << port_ << " port name is '" << portName_ << "'\n\n";
-
     		/**< Flushes the file buffer of the opened connection. */
     		success = tcflush(port_, TCIOFLUSH); // function delivers value 0 on success, -1 otherwise
     		if (success != 0){
@@ -299,15 +298,31 @@
     			msg += string(portName_) + string("'.");
     			throw new ExceptionSerialCom(msg);
     		}
+
     		//** Check whether data needs to be read. */
     		if (sizeRes > 0){
-    			if(read(port_, (void *)res, sizeRes) != sizeRes){
-        			string msg("SerialCom::writeSerialCom: Failed to read from port '");
-        			msg += string(portName_) + string("'.");
-        			throw new ExceptionSerialCom(msg);
+    			unsigned counter = 0;
+    			unsigned maxCounterValue = 20; // a kind of timeout
+    			unsigned short dataRecv = 0;
+    			unsigned short dataRecvTotal = 0;
+    			do{ // try to read data from port
+    				counter++;
+    				dataRecv = read(port_, (void *)res, sizeRes);
+    				if(dataRecv > 0){
+    					dataRecvTotal += dataRecv;
+    				}
+    				if(maxCounterValue == counter) break;
+    			}while(dataRecv != sizeRes);
+
+    			if(dataRecv != sizeRes){
+    				stringstream ss;
+    				ss << "SerialCom::writeSerialCom: Failed while reading from port '";
+    				ss << portName_ << "'.";
+    				ss << "size of data (byte) received = " << dataRecvTotal << " unequal to expected";
+    				ss << " data size to be received = " << sizeRes << ". ";
+        			throw new ExceptionSerialCom(ss.str());
     			}
     		};
-
     		return true;
     	};
 
