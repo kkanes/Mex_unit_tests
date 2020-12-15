@@ -13,6 +13,33 @@
 void unitTestSerialCom();
 
 
+
+class TC41 : public TestCase{
+	TC41() : TestCase(){};
+public:
+	TC41(string s = string("writeSerialCom - write to closed serial com")) : TestCase(s){};
+	virtual bool testRun(); // writeSerialCom - write to closed serial com
+};
+
+class TC42 : public TestCase{
+	TC42() : TestCase(){};
+public:
+	TC42(string s = string("closeSerialCom - write to open com")) : TestCase(s){};
+	virtual bool testRun(); // closeSerialCom - write to open com
+};
+
+class TC43 : public TestCase{
+	TC43() : TestCase(){};
+public:
+	TC43(string s = string("closeSerialCom - open close and open write to serial com")) : TestCase(s){};
+	virtual bool testRun(); // closeSerialCom - open close and open write to serial com
+};
+
+
+
+
+
+
 class TC31 : public TestCase{
 	TC31() : TestCase(){};
 public:

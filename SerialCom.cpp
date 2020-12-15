@@ -284,6 +284,10 @@
     										unsigned short sizeCmd,
     										unsigned char *res,
     										unsigned short sizeRes){
+    		if(!isSerialComOpen_){
+    			string msg("writeSerialCom:: port is not open yet, open port first before write/reading.");
+    			throw new ExceptionSerialCom(msg);
+    		}
 
     		// check parameter values of this function call
     		if ((sizeCmd != 1) && (sizeCmd != 2) && (sizeCmd != 4)){

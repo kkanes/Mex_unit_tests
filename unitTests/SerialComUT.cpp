@@ -67,10 +67,115 @@ void unitTestSerialCom(){
 	TS03.addTestItem(&tc32);
 	TS03.addTestItem(&tc33);
 
+
+	//
+	// test cases for test suite TS04
+	//
+	// create the defined test cases for method closeSerialCom to test suite TS03
+	TC41 tc41("writeSerialCom - write to closed serial com");
+	TC42 tc42("writeSerialCom - closeSerialCom - write to open com");
+	TC43 tc43("closeSerialCom - closeSerialCom - open, close and open write to serial com");
+
+	// add specific test cases to test suite TS03
+	TS04.addTestItem(&tc41);
+	TS04.addTestItem(&tc42);
+	TS04.addTestItem(&tc43);
+
 	// execute unit tests
 	unit.testExecution();
 	unit.writeResultsToFile("out.xml");
 }
+
+
+
+
+bool TC41::testRun(){ // writeSerialCom - write to closed serial com
+	cout << ".";
+	try{
+		unsigned char commandRead[2];
+		commandRead[0] = 0x90;
+		commandRead[1] = (unsigned char)3;
+		unsigned char response[2];
+
+		SerialCom b;
+		b.initSerialCom("/dev/ttyACM0",9600);
+		try{
+			b.writeSerialCom(commandRead,2,response,2); // no exception expected
+			return false;
+		}catch(IException *e){
+			return true;
+		}catch(...){
+			return false;
+		}
+	}catch(IException *e){
+		return false;
+	}catch(...){
+		return false;
+	}
+}
+bool TC42::testRun(){ // closeSerialCom - write to open com
+	cout << ".";
+	try{
+		unsigned char commandRead[2];
+		commandRead[0] = 0x90;
+		commandRead[1] = (unsigned char)3;
+		unsigned char response[2];
+
+		SerialCom b;
+		b.openSerialCom();
+		try{
+			b.writeSerialCom(commandRead,2,response,2); // no exception expected
+			return true;
+		}catch(IException *e){
+			return false;
+		}catch(...){
+			return false;
+		}
+	}catch(IException *e){
+		return false;
+	}catch(...){
+		return false;
+	}
+}
+bool TC43::testRun(){ // closeSerialCom - open close and open write to serial com
+	cout << ".";
+	try{
+		unsigned char commandRead[2];
+		commandRead[0] = 0x90;
+		commandRead[1] = (unsigned char)3;
+		unsigned char response[2];
+
+		SerialCom b;
+		try{
+			b.openSerialCom();
+			b.closeSerialCom();
+			b.openSerialCom();
+			b.writeSerialCom(commandRead,2,response,2);
+			return true;
+		}catch(IException *e){
+			return false;
+		}catch(...){
+			return false;
+		}
+	}catch(IException *e){
+		return false;
+	}catch(...){
+		return false;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 bool TC31::testRun(){ // closeSerialCom - close a not open com
 	cout << ".";
