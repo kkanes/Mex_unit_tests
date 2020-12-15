@@ -44,28 +44,45 @@ public:
      */
     virtual void initSerialCom(const char* portName, unsigned short baudRate) = 0;
 
-    /** \brief Uses the set port name and the baud rate of the class to open a serial connection.
-     *  If the opening is successful, the value in "port_" stands for the open connection and
-     *  can be used for communication.
+    /** \brief Opens the serial com defined by the initSerialCom(...) method  or the constructor
+     * parameter. If the port can be successfully be opened the method retuns true.
+     * If an error occurs an exception (IException) is thrown.
+     * If the serial com is already  open an exception (IException) is thrown.
      *
-     *  \return Returns TRUE on successful opening of a serial connection, otherwise it returns FALSE.
+     *  \return Returns TRUE on successful opening of a serial connection.
+     *  \throws IException
      */
     virtual bool openSerialCom() = 0;
 
     /** \brief Closes a serial connection.
-     *
-     *  \return Returns TRUE on successful closing of a serial connection, otherwise it returns FALSE.
+     *	If an error occurs an exception (IException) is thrown.
+     *  \return Returns true on successful closing of a serial connection.
      */
     virtual bool closeSerialCom() = 0;
 
-    /** \brief "writeSerialCom" is used to write commands to the controller via the open serial connection.
+    /**
      *
-     * \param command[] : Contains the command to be sent (size of 1, 2 or 4 bytes, depending on the command).
-     * \param sizeCommand : Contains the size of the command (1, 2 or 4).
-     * \param response : If the command to be sent expects a return value from the controller, the writeSerialCom is given a pointer to a response array. This can be 1 or 2 bytes in size. If no return value is expected, the pointer is NULL.
-     * \param sizeResponse : Contains the size of the command (1 or 2, in case of no expected return value it is 0).
      *
-     * \return Returns TRUE on successful writing to a serial connection, otherwise it returns FALSE.
+     * \brief This method is used to write commands to and read response from the controller via
+     * the open serial connection. If the serial port is not open an
+     * exception (IException) is thrown. If writing or reading fails, an exception is thrown.
+     *
+     * \param command[] : Contains the command to be sent
+     *                    (size of 1, 2 or 4 bytes, depending on the command).
+     *
+     * \param sizeCommand : Contains the size (in bytes) of the command (1, 2 or 4).
+     *
+     * \param response : Array of the given size (sizeResponse) where the response of the micro-controller
+     *                   can be / is stored.
+     *                   If no return value is expected, the pointer can be NULL.
+     *
+     * \param sizeResponse : Contains the size of the command (1 or 2, in case of no
+     *                       response is expected the value has to be 0).  Thus, a sizeResponse value
+     *                       of 0 indicates that no response from the micro-controller
+     *                       will be read.
+     *
+     * \return Returns true if writing / and reading was done successfully.
+     *
      */
     virtual bool writeSerialCom(unsigned char command[], unsigned short sizeCommand, unsigned char *response, unsigned short sizeResponse) = 0;
 };

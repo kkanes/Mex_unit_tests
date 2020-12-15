@@ -18,7 +18,29 @@
  *
  */
 Pololu::Pololu(const char* portName, unsigned short baudRate){
-	serialCom_.initSerialCom(portName, baudRate);
+	try{
+		isComPortOpen_ = false;
+		serialCom_ = new SerialCom(portName, baudRate);
+		if(serialCom_ == nullptr){
+			string msg("Pololu(Contructor)::Could not create a SerialCom instance.");
+			throw new ExceptionPololu(msg);
+		}
+	}catch(IException *e){
+		throw e;
+	}catch(...){
+		string msg("Pololu(Contructor)::Unknown error while creating a SerialCom instance.");
+		throw new ExceptionPololu(msg);
+	}
+}
+
+
+Pololu::~Pololu(){
+	if(serialCom_ != nullptr){
+		serialCom_->closeSerialCom();
+		delete serialCom_;
+	}
+	isComPortOpen_ = false;
+	return;
 }
 
 /** \brief Function is used to open the serial connection. Function only calls
@@ -27,15 +49,20 @@ Pololu::Pololu(const char* portName, unsigned short baudRate){
  * \return The return value is 1 when opening the port was successful, 0 when an error occurred.
  *
  */
-bool Pololu::openConnection(){
+void Pololu::openConnection(){
     try{
-        serialCom_.openSerialCom();
-        return 1;
+    	serialCom_->closeSerialCom();
+        serialCom_->openSerialCom();
+        isComPortOpen_ = true;
+        return;
     }catch(ExceptionSerialCom  *e){
+    	isComPortOpen_ = false;
     	throw new ExceptionPololu(string("openConnection::") + e->getMsg());
     }catch (std::string &errorMessage){
+    	isComPortOpen_ = false;
     	throw new ExceptionPololu(string("openConnection::") + errorMessage);
     }catch(...){
+    	isComPortOpen_ = false;
     	throw new ExceptionPololu(string("openConnection::Unknown error while openSerial"));
     }
 }
@@ -43,26 +70,49 @@ bool Pololu::openConnection(){
 /** \brief Function is used to close the serial connection. Function only calls
  * the closeSerialCom function of the serialCom object.
  *
- * \return The return value is 1 when closing the port was successful, 0 when an error occurred.
+ * \return The return value is true. Oherwise an exception is thrown.
+ *
  *
  */
-bool Pololu::closeConnection(){
+void Pololu::closeConnection(){
     try{
-        serialCom_.closeSerialCom();
+        serialCom_->closeSerialCom();
+        isComPortOpen_ = false;
+        return;
+    }catch(ExceptionSerialCom  *e){
+    	isComPortOpen_ = false;
+    	throw new ExceptionPololu(string("closeConnection::") + e->getMsg());
     }catch (std::string &errorMessage){
-        std::cout << errorMessage;
-        return 0;
+    	isComPortOpen_ = false;
+    	throw new ExceptionPololu(string("closeConnection::") + errorMessage);
+    }catch(...){
+    	isComPortOpen_ = false;
+    	throw new ExceptionPololu(string("closeConnection::Unknown error while executing closeSerial"));
     }
-    return 1;
 }
 
-/** \brief Used to change the connection data. Sets the serial connection in the same state as the constructor, but with a new port name and baud rate
+/** \brief Initializes the serial com with new connection parameters.
+ *         After execution the port is closed.
  *
  *  \param portName : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
  *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
  *
  */
-void Pololu::initConnection(const char* portName, unsigned short baudRate){serialCom_.initSerialCom(portName, baudRate);}
+void Pololu::initConnection(const char* portName, unsigned short baudRate){
+	try{
+		this->closeConnection();
+		isComPortOpen_ = false;
+		serialCom_->initSerialCom(portName, baudRate);
+	}catch (IException *e) {
+		isComPortOpen_ = false;
+		string msg("initConnection::Error while closing and initializing the serial com.");
+		throw new ExceptionPololu(msg);
+	}catch(...){
+		isComPortOpen_ = false;
+		string msg("initConnection:: Unknown error while closing and initializing the serial com.");
+		throw new ExceptionPololu(msg);
+	}
+}
 
 /** \brief Funktion is used to move a specific servo to a new position.
  *
@@ -73,6 +123,13 @@ void Pololu::initConnection(const char* portName, unsigned short baudRate){seria
  *
  */
 bool Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
+	if(!isComPortOpen_){
+		string msg("setPosition:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
+
     /* Generates the command for the controller.
      * 0x84 = Pololu command for setting the position
      * servo = servo to address as a transfer parameter
@@ -82,7 +139,7 @@ bool Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
     unsigned char command[] = {0x84, (unsigned char)servo, (unsigned char)(goToPosition & 0x7F), (unsigned char)((goToPosition >> 7) & 0x7F)};
     try
     {
-        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_->writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -106,6 +163,13 @@ bool Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
  *
  */
 bool Pololu::setSpeed(unsigned short servo, unsigned short goToSpeed){
+	if(!isComPortOpen_){
+		string msg("setSpeed:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
+
     /* Generates the command for the controller.
      * 0x87 = Pololu command for setting the speed
      * servo = servo to address as a transfer parameter
@@ -115,7 +179,7 @@ bool Pololu::setSpeed(unsigned short servo, unsigned short goToSpeed){
     unsigned char command[] = {0x87, (unsigned char)servo, (unsigned char)(goToSpeed & 0x7F), (unsigned char)((goToSpeed >> 7) & 0x7F)};
     try
     {
-        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_->writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -139,6 +203,13 @@ bool Pololu::setSpeed(unsigned short servo, unsigned short goToSpeed){
  *
  */
 bool Pololu::setAcceleration(unsigned short servo, unsigned short goToAcceleration){
+	if(!isComPortOpen_){
+		string msg("setAcceleration:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
+
     /* Generates the command for the controller.
      * 0x89 = Pololu command for setting the acceleration
      * servo = servo to address as a transfer parameter
@@ -149,7 +220,7 @@ bool Pololu::setAcceleration(unsigned short servo, unsigned short goToAccelerati
     unsigned char command[] = {0x89, (unsigned char)servo, (unsigned char)(goToAcceleration & 0x7F), (unsigned char)((goToAcceleration >> 7) & 0x7F)};
     try
     {
-        serialCom_.writeSerialCom(command, sizeCommand, NULL, 0);
+        serialCom_->writeSerialCom(command, sizeCommand, NULL, 0);
     }
     catch (std::string &errorMessage)
     {
@@ -172,6 +243,13 @@ bool Pololu::setAcceleration(unsigned short servo, unsigned short goToAccelerati
  *
  */
 unsigned short Pololu::getPosition(unsigned short servo){
+	if(!isComPortOpen_){
+		string msg("getPosition:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
+
     /* Generates the command for the controller.
      * 0x90 = Pololu command for reading out the position
      * servo = servo to address as a transfer parameter
@@ -183,7 +261,7 @@ unsigned short Pololu::getPosition(unsigned short servo){
     unsigned char command[] = {0x90, (unsigned char)servo};
     try
     {
-        serialCom_.writeSerialCom(command, sizeCommand, response, sizeResponse);
+        serialCom_->writeSerialCom(command, sizeCommand, response, sizeResponse);
     }
     catch (std::string &errorMessage)
     {
@@ -207,6 +285,12 @@ unsigned short Pololu::getPosition(unsigned short servo){
  *
  */
 bool Pololu::getMovingState(){
+	if(!isComPortOpen_){
+		string msg("getMovingState:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
     /* Generates the command for the controller.
      * 0x93 = Pololu command for reading out the movement of all servos
      */
@@ -217,7 +301,7 @@ bool Pololu::getMovingState(){
     unsigned char command[] = {0x93};
     try
     {
-        serialCom_.writeSerialCom(command, sizeCommand, response, sizeResponse);
+        serialCom_->writeSerialCom(command, sizeCommand, response, sizeResponse);
     }
     catch (std::string &errorMessage)
     {

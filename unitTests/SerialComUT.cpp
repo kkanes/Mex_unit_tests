@@ -87,8 +87,6 @@ void unitTestSerialCom(){
 }
 
 
-
-
 bool TC41::testRun(){ // writeSerialCom - write to closed serial com
 	cout << ".";
 	try{
@@ -163,18 +161,6 @@ bool TC43::testRun(){ // closeSerialCom - open close and open write to serial co
 		return false;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 bool TC31::testRun(){ // closeSerialCom - close a not open com
@@ -257,7 +243,6 @@ bool TC13::testRun(){ // initSerialCom - repeated init
 	}
 	return false;
 };
-
 bool TC12::testRun(){ // initSerialCom - second
 	cout << ".";
 	try{
@@ -277,7 +262,6 @@ bool TC12::testRun(){ // initSerialCom - second
 		false;
 	}
 };
-
 bool TC11::testRun(){ // initSerialCom - open first
 	cout << ".";
 	try{
@@ -296,7 +280,6 @@ bool TC11::testRun(){ // initSerialCom - open first
 		return false;
 	}
 };
-
 
 
 bool TC23::testRun(){ // openSerialCom - repeated open
@@ -323,7 +306,6 @@ bool TC23::testRun(){ // openSerialCom - repeated open
 	}
 	return false;
 };
-
 bool TC22::testRun(){ // "openSerialCom - second
 	cout << ".";
 	try{
@@ -343,7 +325,6 @@ bool TC22::testRun(){ // "openSerialCom - second
 	}
 	return false;
 };
-
 bool TC21::testRun(){ // "openSerialCom - open first
 	cout << ".";
 	try{
@@ -363,5 +344,4 @@ bool TC21::testRun(){ // "openSerialCom - open first
 	}
 	return false;
 };
-
 

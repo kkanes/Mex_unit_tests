@@ -64,12 +64,12 @@ public:
 /** \brief Class for a Pololu object that contains a serial connection and provides basic functions
  *  for programming the controller.
  *
- *  \param serialCom = Is an object of the SerialCom class without initialization of port name and baud rate, the "port_" is NULL.
  */
 class Pololu : public IPololu {
 friend class ServoMotor;
 protected:
-    SerialCom serialCom_;
+    SerialCom *serialCom_ = nullptr;
+    bool isComPortOpen_ = false;
 
     bool setPosition(unsigned short servo, unsigned short goToPosition);
     bool setSpeed(unsigned short servo, unsigned short goToSpeed);
@@ -86,6 +86,9 @@ public:
      */
     Pololu(const char* portName, unsigned short baudRate);
 
+
+    ~Pololu();
+
     /** \brief Used to change the connection data. Sets the serial connection in the same state as the constructor, but with a new port name and baud rate
      *
      *  \param portName : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
@@ -100,8 +103,9 @@ public:
      * \return Value is 1 when opening or closing was successful and 0 when an error occured.
      *
      */
-    bool openConnection();
-    bool closeConnection();
+    void openConnection();
+
+    void closeConnection();
 
     /** \brief Function provides the movement status of all connected servos.
      *

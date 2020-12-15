@@ -274,7 +274,13 @@
 
     	bool SerialComLINUX::closeSerialCom(){
     		if(isSerialComOpen_){
-    			close(port_);
+    			try{
+    				close(port_);
+    			}catch(...){
+    				string msg("closeSerialCom:: error while trying to close port.");
+    				msg += string("state of port is now undefined.");
+    				throw ExceptionSerialCom(msg);
+    			}
     		}
     		isSerialComOpen_ = false;
      		return true;
@@ -295,6 +301,13 @@
     			msg += string("allowed parameter values are either 1,2 or 4.");
     			throw new ExceptionSerialCom(msg);
     		}
+
+    		if ((sizeRes != 0) && (sizeRes != 1) && (sizeRes != 2)){
+    			string msg("SerialCom::writeSerialCom: wrong parameter sizeRes,");
+    			msg += string("allowed parameter values are either 0,1 or 2.");
+    			throw new ExceptionSerialCom(msg);
+    		}
+
 
     		//** Sending the command to the controller via port_. */
     		if(write(port_, cmd, sizeCmd) == -1){

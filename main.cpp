@@ -28,7 +28,7 @@ int main()
 		cout << "min. pos.: " << arm_0.getMinPos() << endl;
 		cout << "get current pos.: "  << arm_0.getPositionInAbs() << endl;
 
-		arm_0.setPositionInAbs(9000);
+		arm_0.setPositionInAbs(3000);
 
 		conn.closeConnection();
 	}catch(IException *e){

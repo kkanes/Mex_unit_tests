@@ -46,62 +46,7 @@ void testOpenClose (){
     //Define a Pololu object
     Pololu conn(portName, baudRate);
 
-    /**< Test 1 */
-    //Open the serial port with the initialized port name and baud rate
-    std::cout << "TEST_01 :: ";
-    if (conn.openConnection()){
-        std::cout << portName << ": Connection opened successfully" << std::endl;
-    }
-    //Open the same port again
-    std::cout << "TEST_01 :: ";
-    if (conn.openConnection()){
-        std::cout << portName << ": Connection opened successfully" << std::endl;
-    }
 
-    /**< Test 2 */
-    //Close the port
-    std::cout << "TEST_02 :: ";
-    if (conn.closeConnection()){
-        std::cout << portName << ": Connection closed successfully" << std::endl;
-    }
-    //Close the same port again
-    std::cout << "TEST_02 :: ";
-    if (conn.closeConnection()){
-        std::cout << portName << ": Connection closed successfully" << std::endl;
-    }
-
-    /**< Test 3 */
-    //Reinitialize the serial port with an unknown name
-    conn.initConnection("COM7", baudRate);
-    //Open the newly initialized port
-    std::cout << "TEST_03 :: ";
-    if (conn.openConnection()){
-        std::cout << "COM7" << ": Connection opened successfully" << std::endl;
-    }
-
-    /**< Test 4 */
-    //Reinitialize the serial port with a known port, but not from the Pololu
-    conn.initConnection("COM1", baudRate);
-    //Open the port
-    std::cout << "TEST_04 :: ";
-    if (conn.openConnection()){
-        std::cout << "COM1" << ": Connection opened successfully" << std::endl;
-    }
-    //Close the port
-    std::cout << "TEST_04 :: ";
-    if (conn.closeConnection()){
-        std::cout << portName << ": Connection closed successfully" << std::endl;
-    }
-
-    /**< Test 5 */
-    //Reinitialize the serial port with a Pololu known port
-    conn.initConnection(portName, baudRate);
-    for (int i = 0; i < 100; i++){
-    	std::cout << "TEST_05_" << i << " :: ";
-        if (conn.openConnection()){
-            std::cout << portName << ": Connection opened successfully" << std::endl;
-        }
-    }
     conn.closeConnection();
 }
 

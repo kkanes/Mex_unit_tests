@@ -515,10 +515,21 @@ public:
 		string s("");
 		s += "<" + this->testType_ + " name=\"" + this->name_   + "\" status=\"";
 		if(getResult()){
-			s += "PASSED\">";
+			s += "PASSED\"";
 		}else{
-			s += "FAILED\">";
+			s += "FAILED\"";
 		}
+
+		// time
+		if( testType_.compare(string("UnitTest")) == 0){
+			time_t _tm =time(NULL );
+			struct tm * curtime = localtime( &_tm );
+			s += " executionTime=\"";
+			s += asctime(curtime);
+			s += "\"";
+		}
+		s += ">";
+
 
 		TestItem *ptrTC;
 		Queue<TestItem*> tmpTC;
