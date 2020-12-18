@@ -40,7 +40,7 @@ unsigned short ServoMotor::getServoNumber(){
  *  \return The return value is the set startingPosition minus the set delta
  *
  */
-unsigned short ServoMotor::getMinPos (){
+unsigned short ServoMotor::getMinPosInAbs (){
 	return startingPosition_ - delta_ ;
 }
 
@@ -49,7 +49,7 @@ unsigned short ServoMotor::getMinPos (){
  *  \return The return value is the set startingPosition.
  *
  */
-unsigned short ServoMotor::getMidPos (){
+unsigned short ServoMotor::getMidPosInAbs (){
 	return startingPosition_;
 }
 
@@ -58,7 +58,7 @@ unsigned short ServoMotor::getMidPos (){
  *  \return The return value is the set startingPosition plus the set delta.
  *
  */
-unsigned short ServoMotor::getMaxPos (){
+unsigned short ServoMotor::getMaxPosInAbs (){
 	return startingPosition_ + delta_ ;
 }
 
@@ -129,7 +129,7 @@ unsigned short ServoMotor::setSpeed(unsigned short newSpeed){
  *
  *  \return The return value is the return value of the setAcceleration funktion of the Pololu object.
  */
-unsigned short ServoMotor::setAccelaration(unsigned short newAcceleration){
+unsigned short ServoMotor::setAcceleration(unsigned short newAcceleration){
 	if (newAcceleration > maxAcceleration || newAcceleration < minAcceleration){
 		throw std::string("ServoMotor::setAcceleration: Acceleration is out of range (1 - 255).");
 	}else{
@@ -195,3 +195,139 @@ void ServoMotor::showPololuValues (unsigned short& min, unsigned short& mid, uns
 	max = (startingPosition_ + delta_) / conFactorMyToPos;
 	mid = (startingPosition_) / conFactorMyToPos;
 }
+
+
+
+
+
+
+
+/***
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+
+
+ServoMotorPololuBase::ServoMotorPololuBase(unsigned short servoID,
+										   unsigned short neutralPos,
+										   unsigned short delta,
+										   IPololu  *pololuController){
+
+	if(servoNmb_ < 0){
+		string msg("ServoMotorPololuBase::servo number is negative.");
+		throw new ExceptionServoMotor(msg);
+	}
+	servoNmb_ = servoID;
+
+	if(neutralPosition_ < 0){
+		string msg("ServoMotorPololuBase:: neutral position is negative.");
+		throw new ExceptionServoMotor(msg);
+	}
+	neutralPosition_ = neutralPos;
+
+	if(neutralPosition_ <= delta){
+		string msg("ServoMotorPololuBase:: delta range is larger than neutral position.");
+		throw new ExceptionServoMotor(msg);
+	}
+	delta_ = delta;
+
+	if(pololuController == NULL){
+		string msg("ServoMotorPololuBase:: controller reference is NULL pointer.");
+		throw new ExceptionServoMotor(msg);
+	}
+	pololuCtrl_ = pololuController;
+
+	return;
+}
+
+
+
+ServoMotorPololuBase::~ServoMotorPololuBase(){
+	pololuCtrl_ = NULL;
+	return;
+};
+
+unsigned short ServoMotorPololuBase::getServoNumber(){return servoNmb_;};
+
+unsigned short ServoMotorPololuBase::getMinPosInAbs(){return (neutralPosition_ - delta_);};
+
+unsigned short ServoMotorPololuBase::getMidPosInAbs(){return  neutralPosition_;};
+
+unsigned short ServoMotorPololuBase::getMaxPosInAbs(){return (neutralPosition_ + delta_);};
+
+unsigned short ServoMotorPololuBase::setPositionInAbs(unsigned short newPosition){
+	try{
+		pololuCtrl_->setPosition(servoNmb_,newPosition);
+	}catch(IException *e){
+		string msg("setPositionInAbs:: error while trying to set a new position:");
+		msg += e->getMsg();
+		throw new ExceptionServoMotor(msg);
+	}catch(...){
+		string msg("setPositionInAbs:: error while trying to set a new position.");
+		throw ExceptionServoMotor(msg);
+	}
+
+	try{
+		return (pololuCtrl_->getPosition(servoNmb_));
+	}catch(IException *e){
+		string msg("setPositionInAbs:: error while trying to set a new position:");
+		msg += e->getMsg();
+		throw new ExceptionServoMotor(msg);
+	}catch(...){
+		string msg("setPositionInAbs:: error while trying to set a new position.");
+		throw ExceptionServoMotor(msg);
+	}
+
+};
+
+unsigned short ServoMotorPololuBase::getPositionInAbs(){
+	try{
+		return (pololuCtrl_->getPosition(servoNmb_));
+	}catch(IException *e){
+		string msg("setPositionInAbs:: error while trying to set a new position:");
+		msg += e->getMsg();
+		throw new ExceptionServoMotor(msg);
+	}catch(...){
+		string msg("setPositionInAbs:: error while trying to set a new position.");
+		throw ExceptionServoMotor(msg);
+	}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

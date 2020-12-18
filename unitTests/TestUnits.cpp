@@ -104,37 +104,44 @@ void testSetGetMethods (){
 	//DM1500_1.showPololuValues(servoMin, servoMid, servoMax);
 
 	// Shows the min-,  mid- and max-position of the defined servos
-	cout << "SERVO: SG_90_1 | SG_90_2 | DM1500_1 \n" << "Min:   " << SG_90_1.getMinPos() << "      " << SG_90_2.getMinPos() << "      " << DM1500_1.getMinPos()
-			<< "\nMid:   " << SG_90_1.getMidPos() << "      " << SG_90_2.getMidPos() << "      " << DM1500_1.getMidPos() << "\nMax:   " << SG_90_1.getMaxPos()
-			<< "      " << SG_90_2.getMaxPos() << "      " << DM1500_1.getMaxPos() << endl;
+	cout << "SERVO: SG_90_1 | SG_90_2 | DM1500_1 \n" << "Min:   " <<
+			SG_90_1.getMinPosInAbs() << "      "
+			<< SG_90_2.getMinPosInAbs() << "      "
+			<< DM1500_1.getMinPosInAbs()
+			<< "\nMid:   " << SG_90_1.getMidPosInAbs()
+			<< "      " << SG_90_2.getMidPosInAbs() << "      "
+			<< DM1500_1.getMidPosInAbs() << "\nMax:   "
+			<< SG_90_1.getMaxPosInAbs()
+			<< "      " << SG_90_2.getMaxPosInAbs() << "      "
+			<< DM1500_1.getMaxPosInAbs() << endl;
 
 	// Set speed and acceleration for all servos
 	SG_90_1.setSpeed(30);
-	SG_90_1.setAccelaration(30);
+	SG_90_1.setAcceleration(30);
 	SG_90_2.setSpeed(30);
-	SG_90_2.setAccelaration(30);
+	SG_90_2.setAcceleration(30);
 	DM1500_1.setSpeed(30);
-	DM1500_1.setAccelaration(30);
+	DM1500_1.setAcceleration(30);
 
 	// Moves the servo 1 to the minimum or maximum position depending on the starting position.
-	if (SG_90_1.getPositionInAbs() < SG_90_1.getMidPos()){
-		SG_90_1.setPositionInAbs(SG_90_1.getMaxPos());
+	if (SG_90_1.getPositionInAbs() < SG_90_1.getMidPosInAbs()){
+		SG_90_1.setPositionInAbs(SG_90_1.getMaxPosInAbs());
 	}else{
-		SG_90_1.setPositionInAbs(SG_90_1.getMinPos());
+		SG_90_1.setPositionInAbs(SG_90_1.getMinPosInAbs());
 	}
 	// Moves the servo 2 to the minimum or maximum position depending on the starting position.
-	if (SG_90_2.getPositionInAbs() < SG_90_2.getMidPos()){
-		SG_90_2.setPositionInAbs(SG_90_2.getMaxPos());
+	if (SG_90_2.getPositionInAbs() < SG_90_2.getMidPosInAbs()){
+		SG_90_2.setPositionInAbs(SG_90_2.getMaxPosInAbs());
 	}else{
-		SG_90_2.setPositionInAbs(SG_90_2.getMinPos());
+		SG_90_2.setPositionInAbs(SG_90_2.getMinPosInAbs());
 	}
 	// Moves the servo 3 to the minimum or maximum position depending on the starting position (5 times).
 	for (int i = 0; i < 5; i++){
-		if (DM1500_1.getPositionInAbs() < DM1500_1.getMidPos()){
-			DM1500_1.setPositionInAbs(DM1500_1.getMaxPos());
+		if (DM1500_1.getPositionInAbs() < DM1500_1.getMidPosInAbs()){
+			DM1500_1.setPositionInAbs(DM1500_1.getMaxPosInAbs());
 			while(conn.getMovingState());
 		}else{
-			DM1500_1.setPositionInAbs(DM1500_1.getMinPos());
+			DM1500_1.setPositionInAbs(DM1500_1.getMinPosInAbs());
 			while(conn.getMovingState());
 		}
 	}
@@ -143,7 +150,7 @@ void testSetGetMethods (){
 	DM1500_1.setPositionInDeg(0);
 	while(conn.getMovingState());
 	// Moves servo 3 to the position of maximum abs position.
-	DM1500_1.setPositionInAbs(DM1500_1.getMaxPos());
+	DM1500_1.setPositionInAbs(DM1500_1.getMaxPosInAbs());
 	while(conn.getMovingState());
 	// Moves servo 3 to the position of -45 degree.
 	DM1500_1.setPositionInDeg(-45);
@@ -209,13 +216,13 @@ void testMEXMovementSetting1(){
 
     // Set speed and acceleration for all servos
     base.setSpeed(speed);
-    base.setAccelaration(acceleration);
+    base.setAcceleration(acceleration);
     arm_1.setSpeed(speed);
-    arm_1.setAccelaration(acceleration);
+    arm_1.setAcceleration(acceleration);
     arm_2.setSpeed(speed);
-    arm_2.setAccelaration(acceleration);
+    arm_2.setAcceleration(acceleration);
     grip.setSpeed(speed);
-    grip.setAccelaration(acceleration);
+    grip.setAcceleration(acceleration);
 
     // Go to parking position
     base.setPositionInAbs(5680);
@@ -233,7 +240,7 @@ void testMEXMovementSetting1(){
     arm_1.setPositionInAbs(4000);
     while(conn.getMovingState());
     grip.setPositionInAbs(4800);
-    arm_2.setPositionInAbs(arm_2.getMinPos());
+    arm_2.setPositionInAbs(arm_2.getMinPosInAbs());
     arm_1.setPositionInAbs(4800);
     while(conn.getMovingState());
 
@@ -266,21 +273,21 @@ void testMEXMovementSetting1(){
 
     // Wave
     grip.setSpeed(100);
-    grip.setAccelaration(100);
+    grip.setAcceleration(100);
     arm_2.setPositionInDeg(90);
     while(conn.getMovingState());
     for (int i = 0; i < 8; i++){
-        if (grip.getPositionInAbs() > grip.getMidPos()){
-        	grip.setPositionInAbs(grip.getMinPos());
+        if (grip.getPositionInAbs() > grip.getMidPosInAbs()){
+        	grip.setPositionInAbs(grip.getMinPosInAbs());
         	while(conn.getMovingState());
         }else{
-        	grip.setPositionInAbs(grip.getMaxPos());
+        	grip.setPositionInAbs(grip.getMaxPosInAbs());
         	while(conn.getMovingState());
         }
     }
     arm_2.setPositionInDeg(0);
     grip.setSpeed(speed);
-    grip.setAccelaration(acceleration);
+    grip.setAcceleration(acceleration);
 
     // Go to Parking Position
     arm_1.setPositionInAbs(2840);
@@ -339,20 +346,20 @@ void testMEXMovementSetting2(){
 
     // Set speed and acceleration for all servos
     arm_0.setSpeed(speed);
-    arm_0.setAccelaration(acceleration);
+    arm_0.setAcceleration(acceleration);
     arm_1.setSpeed(speed);
-    arm_1.setAccelaration(acceleration);
+    arm_1.setAcceleration(acceleration);
     arm_2.setSpeed(speed);
-    arm_2.setAccelaration(acceleration);
+    arm_2.setAcceleration(acceleration);
     arm_3.setSpeed(speed);
-    arm_3.setAccelaration(acceleration);
+    arm_3.setAcceleration(acceleration);
     while(conn.getMovingState());
 
     // Move into starting position
-    arm_0.setPositionInAbs(arm_0.getMidPos());
-    arm_1.setPositionInAbs(arm_1.getMidPos());
-    arm_2.setPositionInAbs(arm_2.getMidPos());
-    arm_3.setPositionInAbs(arm_3.getMinPos());
+    arm_0.setPositionInAbs(arm_0.getMidPosInAbs());
+    arm_1.setPositionInAbs(arm_1.getMidPosInAbs());
+    arm_2.setPositionInAbs(arm_2.getMidPosInAbs());
+    arm_3.setPositionInAbs(arm_3.getMinPosInAbs());
     while(conn.getMovingState());
 
     wait(5000);
@@ -426,10 +433,10 @@ void testMEXMovementSetting2(){
     while(conn.getMovingState());
 
     // Move into starting position
-    arm_0.setPositionInAbs(arm_0.getMidPos());
-    arm_1.setPositionInAbs(arm_1.getMidPos());
-    arm_2.setPositionInAbs(arm_2.getMidPos());
-    arm_3.setPositionInAbs(arm_3.getMinPos());
+    arm_0.setPositionInAbs(arm_0.getMidPosInAbs());
+    arm_1.setPositionInAbs(arm_1.getMidPosInAbs());
+    arm_2.setPositionInAbs(arm_2.getMidPosInAbs());
+    arm_3.setPositionInAbs(arm_3.getMinPosInAbs());
     while(conn.getMovingState());
 
 

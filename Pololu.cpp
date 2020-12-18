@@ -122,7 +122,7 @@ void Pololu::initConnection(const char* portName, unsigned short baudRate){
  *  \return The return value of the function is 1 if the new position was successfully set and 0 if an error occurred.
  *
  */
-bool Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
+unsigned short Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
 	if(!isComPortOpen_){
 		string msg("setPosition:: serial communication port is closed");
 		msg += string("First call copenConnection.");
@@ -191,7 +191,7 @@ bool Pololu::setSpeed(unsigned short servo, unsigned short goToSpeed){
         throw std::string("Pololu::setSpeed: Unknown error, while writing to port.");
         return 0;
     }
-    return 1;
+    return true;
 }
 
 /** \brief Function is used to set the acceleration for a servo with which it should reach the set speed.

@@ -23,12 +23,18 @@ int main()
 		// Open connection to COM port.
 		conn.openConnection();
 		// Define the servos of the robot manipulator
-		ServoMotor arm_0(0, 6240, 3600, &conn);
-		cout << "max. pos.: " << arm_0.getMaxPos() << endl;
-		cout << "min. pos.: " << arm_0.getMinPos() << endl;
+		ServoMotor arm_0(0, 6000, 3000	, &conn);
+		cout << "max. pos.: " << arm_0.getMaxPosInAbs() << endl;
+		cout << "min. pos.: " << arm_0.getMinPosInAbs() << endl;
 		cout << "get current pos.: "  << arm_0.getPositionInAbs() << endl;
 
+		unsigned short pMin, pMid, pMax;
+		arm_0.showPololuValues(pMin,pMid,pMax);
+		cout << pMin	<< " " << pMid << " " << pMax << endl;
+
+
 		arm_0.setPositionInAbs(3000);
+
 
 		conn.closeConnection();
 	}catch(IException *e){

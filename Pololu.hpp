@@ -16,6 +16,10 @@
  *
  */
 class IPololu {
+	friend class ServoMotor;
+	friend class ServoMotorPololuBase;
+	friend class ServoMotorPololuBaseAdv;
+	friend class ServoMotorPololu;
 protected:
 
     /** \brief Funktion is used to move a specific servo to a new position.
@@ -26,7 +30,7 @@ protected:
     *  \return The return value of the function is 1 if the new position was successfully set and 0 if an error occurred.
     *
     */
-	virtual bool setPosition(unsigned short servo, unsigned short goToPosition) = 0;
+	virtual unsigned short setPosition(unsigned short servo, unsigned short goToPosition) = 0;
 
     /** \brief Function is used to set the speed for a servo with which it should move.
     *
@@ -67,11 +71,14 @@ public:
  */
 class Pololu : public IPololu {
 friend class ServoMotor;
+friend class ServoMotorPololuBase;
+friend class ServoMotorPololuBaseAdv;
+friend class ServoMotorPololu;
 protected:
     SerialCom *serialCom_ = nullptr;
     bool isComPortOpen_ = false;
 
-    bool setPosition(unsigned short servo, unsigned short goToPosition);
+    unsigned short setPosition(unsigned short servo, unsigned short goToPosition);
     bool setSpeed(unsigned short servo, unsigned short goToSpeed);
     bool setAcceleration(unsigned short servo, unsigned short goToAcceleration);
     unsigned short getPosition(unsigned short servo);
