@@ -69,7 +69,7 @@ unsigned short ServoMotor::getMaxPos (){
  *
  *  \return The return value is the return value of the setPosition funktion of the Pololu object.
  */
-bool ServoMotor::setPositionInAbs(unsigned short newPosition){
+unsigned short ServoMotor::setPositionInAbs(unsigned short newPosition){
 	if (newPosition > (startingPosition_ + delta_) || newPosition < (startingPosition_ - delta_)){
 		throw std::string("ServoMotor::setPositionInAbs: Abs position is out of range (startingPosition +- delta).");
 	}else{
@@ -83,7 +83,7 @@ bool ServoMotor::setPositionInAbs(unsigned short newPosition){
  *
  *  \return The return value is the return value of the setPosition funktion of the Pololu object.
  */
-bool ServoMotor::setPositionInDeg(short newPosition){
+short ServoMotor::setPositionInDeg(short newPosition){
 	if (newPosition > maxDeg || newPosition < -maxDeg){
 		throw std::string("ServoMotor::setPositionInDeg: Degree is out of range (-90 - 90).");
 	}else{
@@ -97,7 +97,7 @@ bool ServoMotor::setPositionInDeg(short newPosition){
  *
  *  \return The return value is the return value of the setPosition funktion of the Pololu object.
  */
-bool ServoMotor::setPositionInRad(float newPosition){
+float ServoMotor::setPositionInRad(float newPosition){
 	// Since float numbers cannot be compared, the radians are converted to an int. The factor 100 sets the accuracy to 2 digits after the decimal point.
 	if ((int)(100 * newPosition) > (int)(100 * (maxRad)) || (int)(100 * newPosition) < (int)(100 * (-maxRad))){
 		throw std::string("ServoMotor::setPositionInRad: Radiant is out of range (-PI/2 - +PI/2).");
@@ -114,7 +114,7 @@ bool ServoMotor::setPositionInRad(float newPosition){
  *
  *  \return The return value is the return value of the setSpeed funktion of the Pololu object.
  */
-bool ServoMotor::setSpeed(unsigned short newSpeed){
+unsigned short ServoMotor::setSpeed(unsigned short newSpeed){
 	if (newSpeed > maxSpeed || newSpeed < minSpeed){
 		throw std::string("ServoMotor::setSpeed: Speed is out of range (1 - 255).");
 	}else{
@@ -129,7 +129,7 @@ bool ServoMotor::setSpeed(unsigned short newSpeed){
  *
  *  \return The return value is the return value of the setAcceleration funktion of the Pololu object.
  */
-bool ServoMotor::setAccelaration(unsigned short newAcceleration){
+unsigned short ServoMotor::setAccelaration(unsigned short newAcceleration){
 	if (newAcceleration > maxAcceleration || newAcceleration < minAcceleration){
 		throw std::string("ServoMotor::setAcceleration: Acceleration is out of range (1 - 255).");
 	}else{
@@ -150,22 +150,22 @@ unsigned short ServoMotor::getPositionInAbs(){
 		stringstream  ss;
 		ss << "getPositionInAbs:: Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
-		throw new ExceptionServerMotor(e->getMsg() + ss.str());
+		throw new ExceptionServoMotor(e->getMsg() + ss.str());
 	}catch(ExceptionPololu *e){
 		stringstream  ss;
 		ss << "getPositionInAbs:: Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
-		throw new ExceptionServerMotor(e->getMsg() + ss.str());
+		throw new ExceptionServoMotor(e->getMsg() + ss.str());
 	}catch(string msg){
 		stringstream  ss;
 		ss << "getPositionInAbs:: string error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
-		throw new ExceptionServerMotor(msg + ss.str());
+		throw new ExceptionServoMotor(msg + ss.str());
 	}catch(...){
 		stringstream  ss;
 		ss << "getPositionInAbs:: Unknown Error while execution getPositon for servo motor '";
 		ss << servoNumber_ << "'.";
-		throw new ExceptionServerMotor(ss.str());
+		throw new ExceptionServoMotor(ss.str());
 	}
 }
 

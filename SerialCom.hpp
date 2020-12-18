@@ -90,7 +90,7 @@ public:
 
 
 
-class SerialBase : public ISerialCom{
+class SerialComBase : public ISerialCom{
 	protected:
 		bool  isSerialComOpen_ = false;
 		const char* portName_ = nullptr;
@@ -99,7 +99,7 @@ class SerialBase : public ISerialCom{
 
 
 #ifdef _WIN32
-	class SerialComWIN32 : public SerialBase{
+	class SerialComWIN32 : public SerialComBase{
 		public:
 				 SerialComWIN32(const char* portName="COM0", unsigned short baudRate=9600);
 			void initSerialCom (const char* portName="COM0", unsigned short baudRate=9600);
@@ -111,7 +111,7 @@ class SerialBase : public ISerialCom{
 	        HANDLE port_;
 	};
 #else
-	class SerialComLINUX : public SerialBase{
+	class SerialComLINUX : public SerialComBase{
 		public:
 				 SerialComLINUX(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
 		    void initSerialCom(const char* portName="/dev/ttyACM0", unsigned short baudRate=9600);
