@@ -111,7 +111,7 @@ public:
  *
  *
  */
-class IServoMotoBaseAdv : public IServoMotorBase{
+class IServoMotoBaseAdv {
 public:
 	virtual ~IServoMotoBaseAdv(){};
 
@@ -157,7 +157,7 @@ public:
  * in the derived classes that implement these methods.
  *
  */
-class IServoMotor : public IServoMotoBaseAdv{
+class IServoMotor {
 public:
 	virtual ~IServoMotor(){};
 
@@ -219,6 +219,20 @@ public:
 };
 
 
+
+
+
+
+/**
+ *
+ * \class ServoMotorPololuBase
+ *
+ *
+ * \brief Class implements the interface IServoMotorBase
+ * based on the pololu controller board
+ * (https://www.pololu.com/docs/pdf/0J40/maestro.pdf).
+ *
+ */
 class ServoMotorPololuBase : public IServoMotorBase{
 public:
 
@@ -314,27 +328,183 @@ protected:
 	ServoMotorPololuBase(){pololuCtrl_ = NULL;};
 };
 
-
+/**
+ *
+ * \class ServoMotorPololuBaseAdv
+ *
+ * \brief Implements the interface IServoMotoBaseAdv derived from
+ * class ServoMotorPololuBase.
+ *
+ */
 class ServoMotorPololuBaseAdv : public ServoMotorPololuBase, public IServoMotoBaseAdv{
 public:
-	ServoMotorPololuBaseAdv(){throw ExceptionPololu(string("NIY"));};
-	~ServoMotorPololuBaseAdv(){throw ExceptionPololu(string("NIY"));};
-	unsigned short setSpeed(unsigned short newSpeed){throw ExceptionPololu(string("NIY"));};
-	unsigned short setAcceleration(unsigned short newAcceleration){throw ExceptionPololu(string("NIY"));};
+
+	/**
+	 *
+	 * \brief Parameterized constructor. In case of an error
+	 * 			an exception is thrown.
+	 *
+	 *	\param servoID unsigned short. Index (>= 0) of the servo motor that
+	 * 					identifies which slot / pin on the
+	 * 					micro controller board the servo is
+	 * 					connected with.
+	 *
+	 * 	\param neutralPos unsigned short. (neutralPos > 0) Neutral position of the servo,
+	 * 					usually defined by an impulse of 1'500 micro seconds
+	 * 					impulse length.
+	 * 					The position value is usually given by impulse length per
+	 * 					one micro seconds. Using the pololu micro-controller to
+	 * 					control the servor motor the impulse length is given per
+	 * 					units of 1/4 of a quarter of the micro-second.
+	 * 					Therefore, position here is defined impulse length per
+	 * 					one micro second per 1/4 micro second.
+	 * 					Thus, position value = impulse lengths * 4 (units).
+	 *					See Pololu manual for further explanations.
+	 *
+	 *	\param delta unsigned short. (delta < neutralPos) Defines the range of positions values,
+	 * 					starting from the neutral positions +/- delta.
+	 *
+	 *
+	 * 	\param *pololuController. Pointer to a pololu instance that controls the servo motors.
+	 */
+	ServoMotorPololuBaseAdv(unsigned short  servoID,
+							unsigned short  neutralPos,
+							unsigned short  delta,
+							IPololu *pololuController) :
+		ServoMotorPololuBase(servoID,neutralPos,delta,pololuController){;};
+	~ServoMotorPololuBaseAdv(){pololuCtrl_ = NULL;};
+	unsigned short setSpeed(unsigned short newSpeed);
+	unsigned short setAcceleration(unsigned short newAcceleration);
+protected:
+	ServoMotorPololuBaseAdv(){throw new ExceptionPololu(string("NIY"));};
 };
 
 
 class ServoMotorPololu : public ServoMotorPololuBaseAdv, public IServoMotor{
 public:
+
+	/**
+	 *
+	 * \brief Parameterized constructor. In case of an error
+	 * 			an exception is thrown.
+	 *
+	 *	\param servoID unsigned short. Index (>= 0) of the servo motor that
+	 * 					identifies which slot / pin on the
+	 * 					micro controller board the servo is
+	 * 					connected with.
+	 *
+	 * 	\param neutralPos unsigned short. (neutralPos > 0) Neutral position of the servo,
+	 * 					usually defined by an impulse of 1'500 micro seconds
+	 * 					impulse length.
+	 * 					The position value is usually given by impulse length per
+	 * 					one micro seconds. Using the pololu micro-controller to
+	 * 					control the servor motor the impulse length is given per
+	 * 					units of 1/4 of a quarter of the micro-second.
+	 * 					Therefore, position here is defined impulse length per
+	 * 					one micro second per 1/4 micro second.
+	 * 					Thus, position value = impulse lengths * 4 (units).
+	 *					See Pololu manual for further explanations.
+	 *
+	 *	\param delta unsigned short. (delta < neutralPos) Defines the range of positions values,
+	 * 					starting from the neutral positions +/- delta.
+	 *
+	 *
+	 * 	\param *pololuController. Pointer to a pololu instance that controls the servo motors.
+	 */
+	ServoMotorPololu(unsigned short  servoID,
+					 unsigned short  neutralPos,
+					 unsigned short  delta,
+						    IPololu *pololuController) :
+				ServoMotorPololuBaseAdv(servoID,neutralPos,delta,pololuController){
+		maxDeg_ = 180;
+		minDeg_ = 0;
+	};
+
+	~ServoMotorPololu(){pololuCtrl_ = NULL;};
+
+	/**
+	 *
+	 * \brief Maps the given minimal degree value to the minimal position value and
+	 * the given maximal degree value to the maximal position value.
+	 * Per default the maximal position value is defined as 180 degree, while
+	 * the minimal position is defined as 0 degree.
+	 *
+	 *	Note this method call overwrites values set by method setMinMaxRadian
+	 *	and vice versa.
+	 *
+	 */
+	void  setMinMaxDegree(short minDegree, short maxDegree);
+
+	/**
+	 *
+	 * \brief Maps the given minimal degree value to the minimal position value and
+	 * the given maximal degree value to the maximal position value.
+	 * Per default the maximal position value is defined as 2*PI rad, while
+	 * the minimal position is defined as 0 rad.
+	 *
+	 *	Note this method call overwrites values set by method setMinMaxRadian
+	 *	and vice versa.
+	 *
+	 */
+	void  setMinMaxRadian(float minRadian, float maxRadian);
+
+	short setPositionInDeg(short newPosition);
+	float setPositionInRad(float newPosition);
+	short getPositionInDeg();
+	float getPositionInRad();
+	void  showPololuValues(unsigned short& min, unsigned short& mid, unsigned short& max);
+protected:
 	ServoMotorPololu(){throw ExceptionPololu(string("NIY"));};
-	~ServoMotorPololu(){throw ExceptionPololu(string("NIY"));};
-	short setPositionInDeg(short newPosition){throw ExceptionPololu(string("NIY"));};
-	float setPositionInRad(float newPosition){throw ExceptionPololu(string("NIY"));};
-	short getPositionInDeg(){throw ExceptionPololu(string("NIY"));};
-	float getPositionInRad(){throw ExceptionPololu(string("NIY"));};
-	void showPololuValues (unsigned short& min, unsigned short& mid, unsigned short& max){throw ExceptionPololu(string("NIY"));};
+private:
+	short          minDeg_ = 0;
+	short          maxDeg_ = 180;
+	float          deg2rad(unsigned short x);
+	short          rad2deg(float x);
+	unsigned short mapDegValue2PosValue(short d);
+	short          mapPosValue2DegValue(unsigned short p);
 };
 
+
+
+
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 
 /** \brief Class for the ServoMotor object
@@ -344,7 +514,7 @@ public:
  *	\param delta_ = Range of values that the servo can turn left and right.
  *	\param *connection_ = Pointer to an object of the type Pololu for the serial connection.
  */
-class ServoMotor : public IServoMotor{
+class ServoMotor : public IServoMotor, public IServoMotoBaseAdv, public IServoMotorBase{
 private:
 	const short maxDeg = 90;				//maximum degree allowed
 	const float maxRad = M_PI/2;			//maximum radiant allowed, M_PI is the constant from <cmath> for the number Pi
@@ -403,6 +573,32 @@ protected:
 private:
 	ExceptionServoMotor(){};
 };
+
+class ExceptionServoMotorBase : public IException{
+public:
+	ExceptionServoMotorBase(string msg){
+		msg_ = string("ExceptionServoMotorBase::") + msg;
+	};
+	string getMsg(){return msg_;}
+protected:
+	string msg_;
+private:
+	ExceptionServoMotorBase(){};
+};
+
+class ExceptionServoMotorBaseAdv : public IException{
+public:
+	ExceptionServoMotorBaseAdv(string msg){
+		msg_ = string("ExceptionServoMotorBaseAdv::") + msg;
+	};
+	string getMsg(){return msg_;}
+protected:
+	string msg_;
+private:
+	ExceptionServoMotorBaseAdv(){};
+};
+
+
 
 
 #endif /* SERVOMOTOR_HPP_ */

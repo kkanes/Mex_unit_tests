@@ -151,7 +151,7 @@ unsigned short Pololu::setPosition(unsigned short servo, unsigned short goToPosi
         throw std::string("Pololu::setPosition: Unknown error, while writing to port.");
         return 0;
     }
-    return 1;
+    return goToPosition;
 }
 
 /** \brief Function is used to set the speed for a servo with which it should move.
