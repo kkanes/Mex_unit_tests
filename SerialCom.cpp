@@ -220,7 +220,7 @@
     			throw new ExceptionSerialCom(msg);
     		}
 
-    		port_ = open(portName_, O_RDWR | O_NOCTTY); //success requires  permission for the /dev/ttyACM0
+    		port_ = open(portName_, O_RDWR | O_NOCTTY); //success requires  permission
     		if (port_ == -1){
     			string msg("openSerialCom: LINUX cannot open port, check permission of '");
     			msg += string(portName_) + string("'.");

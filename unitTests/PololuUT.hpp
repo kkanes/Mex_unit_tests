@@ -63,8 +63,59 @@ public:
 };
 
 
+class TC24 : public TestCase{
+	TC24() : TestCase(){};
+public:
+	TC24(string s = string("openConnection - try to open wrong channel")) : TestCase(s){};
+	virtual bool testRun(); // openConnection - try to repeated open
+};
 
 
+class TC31 : public TestCase{
+	TC31() : TestCase(){};
+public:
+	TC31(string s = string("closeConnection - repeated close")) : TestCase(s){};
+	virtual bool testRun(); // closeConnection - repeated close
+};
+
+class TC32 : public TestCase{
+	TC32() : TestCase(){};
+public:
+	TC32(string s = string("closeConnection - close before open")) : TestCase(s){};
+	virtual bool testRun(); // closeConnection - close before open
+};
+
+
+class TC41 : public TestCase{
+	TC41() : TestCase(){};
+public:
+	TC41(string s = string("getMovingState - request after init and before open")) : TestCase(s){};
+	virtual bool testRun(); // getMovingState - request after init and before open
+};
+
+
+class TC42 : public TestCase{
+	TC42() : TestCase(){};
+public:
+	TC42(string s = string("getMovingState - request after open")) : TestCase(s){};
+	virtual bool testRun(); // getMovingState - request after open
+};
+
+
+class TC43 : public TestCase{
+	TC43() : TestCase(){};
+public:
+	TC43(string s = string("getMovingState - request  after close")) : TestCase(s){};
+	virtual bool testRun(); // getMovingState - request  after close
+};
+
+
+class TC44 : public TestCase{
+	TC44() : TestCase(){};
+public:
+	TC44(string s = string("getMovingState - request after close and open")) : TestCase(s){};
+	virtual bool testRun(); // getMovingState - request after close and open
+};
 
 } // ende namespace UT_Pololu
 
