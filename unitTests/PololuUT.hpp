@@ -38,6 +38,34 @@ public:
 	virtual bool testRun(); // initConnection - repeated init
 };
 
+
+
+class TC21 : public TestCase{
+	TC21() : TestCase(){};
+public:
+	TC21(string s = string("openConnection - open first")) : TestCase(s){};
+	virtual bool testRun(); // openConnection - open first
+};
+
+class TC22 : public TestCase{
+	TC22() : TestCase(){};
+public:
+	TC22(string s = string("openConnection - init open time")) : TestCase(s){};
+	virtual bool testRun(); // openConnection - init open time
+};
+
+
+class TC23 : public TestCase{
+	TC23() : TestCase(){};
+public:
+	TC23(string s = string("openConnection - repeated open")) : TestCase(s){};
+	virtual bool testRun(); // openConnection - repeated open
+};
+
+
+
+
+
 } // ende namespace UT_Pololu
 
 
