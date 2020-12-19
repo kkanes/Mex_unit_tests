@@ -10,10 +10,15 @@
 #include "../ServoMotor.hpp"
 #include "./TestUnits.hpp"
 #include "./SerialComUT.hpp"
+#include "./PololuUT.hpp"
 
 using namespace std;
 
 int main(){
-	unitTestSerialCom();
+
+	UT_SerialCom::execUnitTests();
+	UT_Pololu::execUnitTests();
+
+	return 0;
 }
 

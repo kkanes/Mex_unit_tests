@@ -10,7 +10,10 @@
 
 #include "../SimplUnitTestFW.hpp"
 
-void unitTestSerialCom();
+
+namespace UT_SerialCom{
+
+void execUnitTests();
 
 
 
@@ -111,5 +114,7 @@ public:
 	virtual bool testRun(); // "openSerialCom - repeated open
 };
 
+
+} // namespace UT_SerialCom
 
 #endif /* SERIALCOMUT_HPP_ */

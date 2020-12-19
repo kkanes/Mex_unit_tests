@@ -31,14 +31,18 @@ unitTest.o:	$(TESTDIR)unitTest.cpp SerialCom.cpp SerialCom.hpp Pololu.cpp Pololu
 SerialComUT.o:	$(TESTDIR)SerialComUT.cpp SerialCom.cpp SerialCom.hpp  
 	$(CC) $(INCL) $(CFLAGS) -c  $(TESTDIR)SerialComUT.cpp -o $(OBJ)SerialComUT.o	
 	
+PololuUT.o:	$(TESTDIR)PololuUT.cpp Pololu.cpp Pololu.hpp  
+	$(CC) $(INCL) $(CFLAGS) -c  $(TESTDIR)PololuUT.cpp -o $(OBJ)PololuUT.o 
+	
+	
 main:	main.o SerialCom.o ServoMotor.o Pololu.o
 	$(CC) -o main  $(OBJ)main.o $(OBJ)Pololu.o $(OBJ)SerialCom.o $(OBJ)ServoMotor.o  $(LIBS)  $(CFLAGS)
 
 
 
-unitTest:	unitTest.o TestUnits.o SerialCom.o ServoMotor.o Pololu.o SerialComUT.o
+unitTest:	unitTest.o TestUnits.o SerialCom.o ServoMotor.o Pololu.o SerialComUT.o PololuUT.o
 	$(CC) -o unitTest $(OBJ)unitTest.o $(OBJ)TestUnits.o $(OBJ)SerialCom.o $(OBJ)Pololu.o $(OBJ)ServoMotor.o \
-						$(OBJ)SerialComUT.o  $(LIBS)  $(CFLAGS)
+						$(OBJ)SerialComUT.o  $(OBJ)PololuUT.o  $(LIBS)  $(CFLAGS)
 
 doc:
 	doxygen Doxyfile

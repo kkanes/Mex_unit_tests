@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : Pololu.hpp
-// Author      : Willi Penner
+// Author      : Willi Penner, Martin Huelse (martin.huelse@fh-bielefeld.de)
 //
 // Description : Pololu header file. It contains the declaration of the
 //               IPololu interface and the Pololu class
@@ -11,8 +11,11 @@
 #include "SerialCom.hpp"
 
 
-/** \brief Interface to control a Pololu controller. The interface
+/**
+ *
+ * \brief Interface to control a Pololu controller. The interface
  *  provides the basic functions for the control of servo motors.
+ *
  *
  */
 class IPololu {
@@ -20,53 +23,87 @@ class IPololu {
 	friend class ServoMotorPololuBase;
 	friend class ServoMotorPololuBaseAdv;
 	friend class ServoMotorPololu;
-protected:
 
-    /** \brief Funktion is used to move a specific servo to a new position.
-    *
-    *  \param servo = Servo to move
-    *  \param goToPosition = New position to be approached. The value for the new position is calculated from the position in microseconds times 4 (e.g. new position should be 1500 microseconds, then 6000 must be set in the function as new position)
-    *
-    *  \return The return value of the function is 1 if the new position was successfully set and 0 if an error occurred.
-    *
-    */
-	virtual unsigned short setPosition(unsigned short servo, unsigned short goToPosition) = 0;
-
-    /** \brief Function is used to set the speed for a servo with which it should move.
-    *
-    *  \param servo = Servo to set speed
-    *  \param goToSpeed = Speed of the servo (speed value 1 = 0.25us / 10ms or speed value 100 = 25us / 10ms). A speed value of 0 means infinite speed, i.e. the maximum speed of the servo.
-    *
-    *  \return The return value of the function is 1 if the new speed was successfully set and 0 if an error occurred.
-    *
-    */
-	virtual bool setSpeed(unsigned short servo, unsigned short goToSpeed) = 0;
-
-    /** \brief Function is used to set the acceleration for a servo with which it should reach the set speed.
-    *
-    *  \param servo = Servo to set acceleration
-    *  \param goToAcceleration = Acceleration of the servo (acceleration value 1 = 0.25us / 10ms / 80ms or speed value 100 = 25us / 10ms / 80ms). A speed value of 0 means infinite acceleration, i.e. the maximum acceleration of the servo.
-    *
-    *  \return The return value of the function is 1 if the new acceleration was successfully set and 0 if an error occurred.
-    *
-    */
-	virtual bool setAcceleration(unsigned short servo, unsigned short goToAcceleration) = 0;
-
-    /** \brief Function is used to read out the current position of a particular servo.
-    *
-    * 	\param servo = Servo whose current position is to be read out.
-    *
-    *	\return The return value is the current position of the selected servo. The position value supplied by the controller must still be multiplied by 4.
-    *
-    */
-	virtual unsigned short getPosition(unsigned short servo) = 0;
 public:
+
+    /**
+     *
+     * \brief Moves motor to the specified position.
+     * If an error occurs an exception is thrown.
+     *
+     *  \param unsigned short servoID. ID of the servo motor.
+     *  \param unsigned short tragetPos. Target position to be reached.
+     *
+     *  \return unsigned short is undefined.
+     *
+     */
+	virtual unsigned short setPosition(unsigned short servoID, unsigned short tragetPos) = 0;
+
+    /**
+     *
+     *
+     * \brief Sets the maximal speed of the specified servo motor.
+     *	If an error occurs an exception is thrown.
+     *
+     *  \param unsigned short servoID. ID of the servo motor.
+     *  \param unsigned maxSpeed. Maximal speed value.
+     *
+     *  \return unsigned short is undefined.
+     *
+     */
+	virtual bool setSpeed(unsigned short servoID, unsigned short maxSpeed) = 0;
+
+
+    /**
+     *
+     *
+     * \brief Sets the maximal acceleration of the specified servo motor.
+     *	If an error occurs an exception is thrown.
+     *
+     *  \param unsigned short servoID. ID of the servo motor.
+     *  \param unsigned maxAccel. Maximal acceleration.
+     *
+     *  \return unsigned short is undefined.
+     *
+     */
+	virtual bool setAcceleration(unsigned short servoID, unsigned short maxAccel) = 0;
+
+
+    /**
+     *
+     * \brief Delivers the position value the specified motor is target at.
+     * If an error occurs an exception is thrown.
+     *
+     *  \param unsigned short servoID. ID of the servo motor.
+     *  \param unsigned short tragetPos. Target position to be reached.
+     *
+     *  \return unsigned short is undefined.
+     *
+     */
+	virtual unsigned short getPosition(unsigned short servoID) = 0;
+
+
 	virtual ~IPololu(){};
+
+    /**
+     *
+     * \brief Returns the moving state of all motors the control board
+     * is connected with.
+     * If an error occurs an exception is thrown.
+     *
+     *
+     *  \return bool. Return value is false if all motors don't move
+     *  anymore, otherwise return value is true.
+     *
+     */
     virtual bool getMovingState() = 0;
 };
 
-/** \brief Class for a Pololu object that contains a serial connection and provides basic functions
- *  for programming the controller.
+/**
+ *
+ * \brief Class that implements the interface IPololu for a Pololu
+ * board that creates and manages serial communication object and
+ * provides basic functions for programming the controller.
  *
  */
 class Pololu : public IPololu {
@@ -74,6 +111,7 @@ friend class ServoMotor;
 friend class ServoMotorPololuBase;
 friend class ServoMotorPololuBaseAdv;
 friend class ServoMotorPololu;
+
 protected:
     SerialCom *serialCom_ = nullptr;
     bool isComPortOpen_ = false;
@@ -84,41 +122,66 @@ protected:
     unsigned short getPosition(unsigned short servo);
 
 public:
-    /** \brief Constructor executes serialCom.initSerialCom to initialize the serial connection. An object of the Pololu class must be
-     *  initialized with the port name and baud rate using the constructor.
+    /**
      *
-     *  \param portName : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
-     *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
+     * \brief Constructor tries to open serial communication port having
+     *  specified port name and baud rate. If the communication channel
+     *  cannot be opened then a exception is thrown.
+     *
+     *  \param portName const char*. Name of the communication port.
+     *  \param baudRate unsigned short. Baud rate parameter of serial communication
+     *                                  port.
      *
      */
     Pololu(const char* portName, unsigned short baudRate);
 
 
+    /**
+     *
+     * \brief Destructor. Closes the serial communicaton channel.
+     *
+     */
     ~Pololu();
 
-    /** \brief Used to change the connection data. Sets the serial connection in the same state as the constructor, but with a new port name and baud rate
+    /**
      *
-     *  \param portName : The port name is used to open a serial connection via the port name for the controller specified by the operating system.
-     *  \param baudRate : The baud rate determines the transmission speed at which communication between the PC and controller takes place.
+     * \brief Used to change the connection data. If the communication
+     * channel is open then the channel is closed first.
+     * The new connection parameters are set, but the channel will
+     * not be opened. To open the channel the method openConnection
+     * has to be called first.
+     *
+     * If an error occurs an exception is thrown.
+     *
+     *  \param portName const char*. Name of the communication port.
+     *  \param baudRate unsigned short. Baud rate parameter of serial communication
+     *                                  port.
      *
      */
     void initConnection(const char* portName, unsigned short baudRate);
 
-    /** \brief Functions are used to open and close the serial connection. Functions only call
-     * the openSerialCom and closeSerialCom functions of the serialCom object.
+    /**
      *
-     * \return Value is 1 when opening or closing was successful and 0 when an error occured.
+     * \brief Opens the serial connection with the currently specified
+     * parameter (see method initConnection(...)).
+     *
+     * If an error occurs an exception is thrown.
+     *
      *
      */
     void openConnection();
 
-    void closeConnection();
 
-    /** \brief Function provides the movement status of all connected servos.
+    /**
      *
-     *	\return The return value is 1 while a servo is still in motion and 0 when all servos are at a standstill.
+     * \brief Closes the serial connection.
+     *
+     * If an error occurs an exception is thrown.
      *
      */
+    void closeConnection();
+
+
     bool getMovingState();
 };
 

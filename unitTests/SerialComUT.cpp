@@ -9,9 +9,9 @@
 #include "../SerialCom.hpp"
 #include "SerialComUT.hpp"
 
+namespace UT_SerialCom{
 
-
-void unitTestSerialCom(){
+void execUnitTests(){
 
 	// a unit a class
 	UnitTest unit("SerialCom");
@@ -83,7 +83,7 @@ void unitTestSerialCom(){
 
 	// execute unit tests
 	unit.testExecution();
-	unit.writeResultsToFile("out.xml");
+	unit.writeResultsToFile("UT_SerialCom.xml");
 }
 
 
@@ -261,6 +261,7 @@ bool TC12::testRun(){ // initSerialCom - second
 	}catch(...){
 		false;
 	}
+	return false;
 };
 bool TC11::testRun(){ // initSerialCom - open first
 	cout << ".";
@@ -345,3 +346,5 @@ bool TC21::testRun(){ // "openSerialCom - open first
 	return false;
 };
 
+
+} // ende namespace UT_SerialCom
