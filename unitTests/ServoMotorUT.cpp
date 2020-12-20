@@ -155,7 +155,7 @@ bool TC71::testRun(){ // constructor - with no communication channel
 	cout << ".";
 	try{
 		try{
-			ServoMotorPololu m(0,6000,3000,NULL);
+			ServoMotor m(0,6000,3000,NULL);
 			return false;
 		}catch(IException *e){
 			return true;
@@ -176,7 +176,7 @@ bool TC72::testRun(){ // constructor - negative servo motor nmb
 		p.openConnection();
 		try{
 			int srvNmb = -1;
-			ServoMotorPololu m(srvNmb,6000,3000,&p);
+			ServoMotor m(srvNmb,6000,3000,&p);
 			p.getErrors();
 			return false;
 		}catch(IException *e){
@@ -201,7 +201,7 @@ bool TC73::testRun(){ // constructor - negative neutral position values
 		p.openConnection();
 		try{
 			int nPos = -1;
-			ServoMotorPololu m(0,nPos,3000,&p);
+			ServoMotor m(0,nPos,3000,&p);
 			if(nPos != m.getMidPosInAbs()){
 				return true;
 			}else{
@@ -227,7 +227,7 @@ bool TC74::testRun(){ // constructor - delta values = 0
 		p.openConnection();
 		try{
 			int delta = 0;
-			ServoMotorPololu m(0,delta,3000,&p);
+			ServoMotor m(0,delta,3000,&p);
 		}catch(IException *e){
 			return true;
 		}catch(...){
@@ -249,7 +249,7 @@ bool TC75::testRun(){ // constructor - non matching neutral and delta values
 		unsigned short delta = 6001;
 		unsigned short nPos = 6000;
 		try{
-			ServoMotorPololu m(0,nPos,delta,&p);
+			ServoMotor m(0,nPos,delta,&p);
 			return false;
 		}catch(IException *e){
 			return true;
@@ -271,7 +271,7 @@ bool TC76::testRun(){ // constructor - call with no motor connected
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
 		try{
-			ServoMotorPololu m(1,6000,3000,&p); // servo motor board ID must not be
+			ServoMotor m(1,6000,3000,&p); // servo motor board ID must not be
 			                                        // connected to a servo motor
 			return true;
 		}catch(IException *e){
@@ -294,7 +294,7 @@ bool TC77::testRun(){ // constructor - call with non existing servo board ID
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
 		try{
-			ServoMotorPololu m(111,6000,3000,&p); // servo motor board ID must not
+			ServoMotor m(111,6000,3000,&p); // servo motor board ID must not
 													  // be defined for used board
 			return true;
 		}catch(IException *e){
@@ -318,7 +318,7 @@ bool TC61::testRun(){ // getServoNumber - having closed communication channel
 		p.openConnection();
 		unsigned short sNmb, value;
 		sNmb = 0;
-		ServoMotorPololu m(sNmb,6000,3000,&p);
+		ServoMotor m(sNmb,6000,3000,&p);
 		p.closeConnection();
 		value = m.getServoNumber();
 		try{
@@ -348,7 +348,7 @@ bool TC62::testRun(){ // getServoNumber - with open communication channel
 		p.openConnection();
 		unsigned short sNmb, value;
 		sNmb = 0;
-		ServoMotorPololu m(sNmb,6000,3000,&p);
+		ServoMotor m(sNmb,6000,3000,&p);
 		value = m.getServoNumber();
 		try{
 			if(value != sNmb){
@@ -385,7 +385,7 @@ bool TC51::testRun(){ // getMaxPosInAbs - having closed communication channel
 		unsigned short pos;
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		p.closeConnection();
 		pos = m.getMaxPosInAbs();
 		try{
@@ -417,7 +417,7 @@ bool TC52::testRun(){ // getMaxdPosInAbs - with open communication channel
 		unsigned short mid = 6000;
 		unsigned short delta = 3000;
 		unsigned short pos;
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		pos = m.getMaxPosInAbs();
 		try{
 			if(pos != (mid + delta)){
@@ -449,7 +449,7 @@ bool TC41::testRun(){ // getMidPosInAbs - having closed communication channel
 		unsigned short pos;
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		p.closeConnection();
 		pos = m.getMidPosInAbs();
 		try{
@@ -481,7 +481,7 @@ bool TC42::testRun(){ // getMidPosInAbs - with open communication channel
 		unsigned short mid = 6000;
 		unsigned short delta = 3000;
 		unsigned short pos;
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		pos = m.getMidPosInAbs();
 		try{
 			if(pos != mid){
@@ -510,7 +510,7 @@ bool TC31::testRun(){ // getMinPosInAbs - having closed communication channel
 		unsigned min;
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		p.closeConnection();
 		min = m.getMinPosInAbs();
 		try{
@@ -542,7 +542,7 @@ bool TC32::testRun(){ // getMinPosInAbs - with open communication channel
 		unsigned short mid = 6000;
 		unsigned short delta = 3000;
 		unsigned min;
-		ServoMotorPololu m(0,mid,delta,&p);
+		ServoMotor m(0,mid,delta,&p);
 		min = m.getMinPosInAbs();
 		try{
 			if(min != (mid - delta)){
@@ -573,7 +573,7 @@ bool TC21::testRun(){ // getPositionInAbs - having closed communication channel
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		p.closeConnection();
 		try{
 			m.getPositionInAbs();
@@ -596,7 +596,7 @@ bool TC22::testRun(){ // getPositionInAbs - with no communication channel
 	cout << ".";
 	try{
 		try{
-			ServoMotorPololu m(0,6000,3000,NULL);
+			ServoMotor m(0,6000,3000,NULL);
 			m.getPositionInAbs();
 			return false;
 		}catch(IException *e){
@@ -618,7 +618,7 @@ bool TC23::testRun(){ // getPositionInAbs - with open communication channel
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		try{
 			short pos = m.getPositionInAbs();
 			return true;
@@ -646,7 +646,7 @@ bool TC11::testRun(){ // setPositionInAbs - having closed communication channel
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		p.closeConnection();
 		try{
 			m.setPositionInAbs(6000);
@@ -669,7 +669,7 @@ bool TC12::testRun(){ // setPositionInAbs - with no communication channel
 	cout << ".";
 	try{
 		try{
-			ServoMotorPololu m(0,6000,3000,NULL);
+			ServoMotor m(0,6000,3000,NULL);
 			m.setPositionInAbs(6000);
 			return false;
 		}catch(IException *e){
@@ -691,7 +691,7 @@ bool TC13::testRun(){ // setPositionInAbs - with open communication channel
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		try{
 			short pos = m.getPositionInAbs();
 			m.setPositionInAbs(pos);
@@ -716,7 +716,7 @@ bool TC14::testRun(){ // setPositionInAbs - check the set value within its limit
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		unsigned short mid = m.getMidPosInAbs();
 		unsigned short max = m.getMaxPosInAbs();
 		unsigned short posTarget = mid - ((max - mid) / 2);
@@ -752,7 +752,7 @@ bool TC15::testRun(){ // setPositionInAbs - try to set pos value larger then max
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		unsigned short max = m.getMaxPosInAbs();
 		unsigned short posTarget = max + 1;
 		try{
@@ -776,7 +776,7 @@ bool TC16::testRun(){ // setPositionInAbs - try to set pos value smaller then mi
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
-		ServoMotorPololu m(0,6000,3000,&p);
+		ServoMotor m(0,6000,3000,&p);
 		unsigned short min = m.getMinPosInAbs();
 		unsigned short posTarget = min - 1;
 		try{

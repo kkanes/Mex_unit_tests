@@ -22,8 +22,13 @@ int main()
 		Pololu conn(portName, 9600);
 		// Open connection to COM port.
 		conn.openConnection();
+		conn.getErrors();
+
+		return 0;
+
+
 		// Define the servos of the robot manipulator
-		ServoMotor arm_0(0, 6000, 3000	, &conn);
+		ServoMotor arm_0(0, 7500, 1500	, &conn);
 		cout << "max. pos.: " << arm_0.getMaxPosInAbs() << endl;
 		cout << "min. pos.: " << arm_0.getMinPosInAbs() << endl;
 		cout << "get current pos.: "  << arm_0.getPositionInAbs() << endl;
@@ -32,8 +37,8 @@ int main()
 		arm_0.showPololuValues(pMin,pMid,pMax);
 		cout << pMin	<< " " << pMid << " " << pMax << endl;
 
-
-		arm_0.setPositionInAbs(3000);
+		arm_0.setMinMaxDegree(-45,45);
+		arm_0.setPositionInDeg(0);
 
 
 		conn.closeConnection();

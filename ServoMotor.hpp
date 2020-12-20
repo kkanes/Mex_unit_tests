@@ -380,7 +380,7 @@ protected:
 };
 
 
-class ServoMotorPololu : public ServoMotorPololuBaseAdv, public IServoMotor{
+class ServoMotor : public ServoMotorPololuBaseAdv, public IServoMotor{
 public:
 
 	/**
@@ -411,7 +411,7 @@ public:
 	 *
 	 * 	\param *pololuController. Pointer to a pololu instance that controls the servo motors.
 	 */
-	ServoMotorPololu(unsigned short  servoID,
+	ServoMotor(unsigned short  servoID,
 					 unsigned short  neutralPos,
 					 unsigned short  delta,
 						    IPololu *pololuController) :
@@ -420,7 +420,7 @@ public:
 		minDeg_ = 0;
 	};
 
-	~ServoMotorPololu(){pololuCtrl_ = NULL;};
+	~ServoMotor(){pololuCtrl_ = NULL;};
 
 	/**
 	 *
@@ -454,7 +454,7 @@ public:
 	float getPositionInRad();
 	void  showPololuValues(unsigned short& min, unsigned short& mid, unsigned short& max);
 protected:
-	ServoMotorPololu(){throw ExceptionPololu(string("NIY"));};
+	ServoMotor(){throw ExceptionPololu(string("NIY"));};
 private:
 	short          minDeg_ = 0;
 	short          maxDeg_ = 180;
@@ -467,91 +467,6 @@ private:
 
 
 
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-
-/** \brief Class for the ServoMotor object
- *
- *	\param servoNumber_ = Port to which the servo is connected on the controller
- *	\param startingPosition_ = The center position of the servo, this position is determined in the Pololu Maestro Control Center.
- *	\param delta_ = Range of values that the servo can turn left and right.
- *	\param *connection_ = Pointer to an object of the type Pololu for the serial connection.
- */
-class ServoMotor : public IServoMotor, public IServoMotoBaseAdv, public IServoMotorBase{
-private:
-	const short maxDeg = 90;				//maximum degree allowed
-	const float maxRad = M_PI/2;			//maximum radiant allowed, M_PI is the constant from <cmath> for the number Pi
-	const unsigned short maxSpeed = 255;				//maximum value for the speed
-	const unsigned short maxAcceleration = 255;      //maximum value for the acceleration
-	const unsigned short minSpeed = 1;				//minimum value for the speed
-	const unsigned short minAcceleration = 1;  //minimum value for the acceleration
-	const unsigned short conFactorDegToPos = 10;	    //conversion factor from degrees to position
-	const unsigned short conFactorMyToPos = 4;		//conversion factor to convert �s (position value of a servo) to position values
-	unsigned short servoNumber_;
-	unsigned short startingPosition_;	//startPosition is the center position of a servo, in most cases it is value of 6000 (1500�s * 4)
-	unsigned short delta_;
-	Pololu *connection_ = NULL;
-public:
-	/** \brief ServoMotor class constructor. An object of the ServoMotor type must be initiated via the constructor.
-	 *
-	 * 	\param servo = is the slot number on the controller board to which the servo is connected
-	 *  \param startingPosition = is the center position of the servo motor (must be determined in the Pololu Maestro Control Center)
-	 *  \param delta = is the range of motion that the servo can reach from the center position
-	 *  \param *connection = is a pointer to the Pololu object for the serial connection
-	 *
-	 * */
-	ServoMotor(unsigned short servo, unsigned short startingPosition, unsigned short delta, Pololu *connection);
-	unsigned short getServoNumber();
-	unsigned short getMinPosInAbs();
-	unsigned short getMidPosInAbs();
-	unsigned short getMaxPosInAbs();
-	unsigned short setPositionInAbs(unsigned short newPosition);
-	short setPositionInDeg(short newPosition);
-	float setPositionInRad(float newPosition);
-	unsigned short setSpeed(unsigned short newSpeed);
-	unsigned short setAcceleration(unsigned short newAcceleration);
-	unsigned short getPositionInAbs();
-	short getPositionInDeg();
-	float getPositionInRad();
-	void showPololuValues (unsigned short& min, unsigned short& mid, unsigned short& max);
-};
 
 
 /**
