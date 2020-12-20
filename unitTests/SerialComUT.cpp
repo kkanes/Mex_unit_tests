@@ -11,7 +11,7 @@
 
 namespace UT_SerialCom{
 
-void execUnitTests(){
+bool execUnitTests(string xmlFilename){
 
 	// a unit a class
 	UnitTest unit("SerialCom");
@@ -83,7 +83,9 @@ void execUnitTests(){
 
 	// execute unit tests
 	unit.testExecution();
-	unit.writeResultsToFile("UT_SerialCom.xml");
+	unit.writeResultsToFile(xmlFilename);
+
+	return unit.getResult();
 }
 
 

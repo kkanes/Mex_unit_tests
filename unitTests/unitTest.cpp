@@ -17,9 +17,18 @@ using namespace std;
 
 int main(){
 
-	UT_SerialCom::execUnitTests();
-	UT_Pololu::execUnitTests();
-	UT_ServoMotorBase::execUnitTests();
+	bool result, res1, res2, res3;
+
+	res1 = UT_SerialCom::execUnitTests("UT_SerialCom.xml");
+	res2 = UT_Pololu::execUnitTests("UT_Pololu.xml");
+	res3 = UT_ServoMotorBase::execUnitTests("UT_ServoMotorBase.xml");
+
+	result = res1 && res2 && res3;
+	if(result){
+		cout << "\nAll units tests successfully passed.\n";
+	}else{
+		cout << "\nNOT all unit tests have been successfully passed. Check xml-files for detailed test results.\n";
+	}
 
 	return 0;
 }

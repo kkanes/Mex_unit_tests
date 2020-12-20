@@ -15,7 +15,7 @@ using namespace std;
 
 namespace UT_Pololu{
 
-void execUnitTests(){
+bool execUnitTests(string xmlFilename){
 
 	// a unit a class
 	UnitTest unit("Pololu");
@@ -120,8 +120,9 @@ void execUnitTests(){
 
 	// execute unit tests
 	unit.testExecution();
-	unit.writeResultsToFile("UT_Pololu.xml");
+	unit.writeResultsToFile(xmlFilename);
 
+	return unit.getResult();
 }
 
 

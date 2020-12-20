@@ -13,7 +13,7 @@
 
 namespace UT_SerialCom{
 
-void execUnitTests();
+bool execUnitTests(string xmlFilename);
 
 
 

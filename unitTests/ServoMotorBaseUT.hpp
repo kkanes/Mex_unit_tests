@@ -15,7 +15,7 @@
 
 namespace UT_ServoMotorBase{
 
-void execUnitTests();
+bool execUnitTests(string xmlFilename);
 
 class TC71 : public TestCase{
 	TC71() : TestCase(){};

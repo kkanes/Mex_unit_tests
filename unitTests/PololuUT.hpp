@@ -13,7 +13,7 @@
 
 namespace UT_Pololu{
 
-void execUnitTests();
+bool execUnitTests(string xmlFilename);
 
 
 class TC61 : public TestCase{

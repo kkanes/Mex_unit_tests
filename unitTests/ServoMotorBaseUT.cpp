@@ -12,7 +12,7 @@
 
 namespace UT_ServoMotorBase{
 
-void execUnitTests(){
+bool execUnitTests(string xmlFilename){
 
 	// a unit a class
 	UnitTest unit("ServoMotorBase");
@@ -145,7 +145,9 @@ void execUnitTests(){
 
 	// execute unit tests
 	unit.testExecution();
-	unit.writeResultsToFile("UT_ServoMotorBase.xml");
+	unit.writeResultsToFile(xmlFilename);
+
+	return unit.getResult();
 }
 
 bool TC71::testRun(){ // constructor - with no communication channel
@@ -277,7 +279,6 @@ bool TC76::testRun(){ // constructor - call with no motor connected
 			return false;
 		};
 	}catch(IException *e){
-		cout << e->getMsg();
 		return false;
 	}catch(...){
 		return false;
