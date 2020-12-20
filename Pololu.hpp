@@ -97,6 +97,18 @@ public:
      *
      */
     virtual bool getMovingState() = 0;
+
+
+    /**
+     *
+     * \brief Reads and returns all currently detected error codes.
+     *
+     * \return unsigned short. Errors codes represented as bit-codes.
+     *
+     *
+     *
+     */
+    virtual unsigned short getErrors() = 0;
 };
 
 /**
@@ -123,6 +135,7 @@ protected:
     bool setSpeed(unsigned short servo, unsigned short goToSpeed);
     bool setAcceleration(unsigned short servo, unsigned short goToAcceleration);
     unsigned short getPosition(unsigned short servo);
+
 
 public:
     /**
@@ -186,6 +199,9 @@ public:
 
 
     bool getMovingState();
+
+
+    unsigned short getErrors();
 };
 
 

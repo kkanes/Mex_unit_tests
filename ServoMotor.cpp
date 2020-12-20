@@ -258,6 +258,27 @@ ServoMotorPololuBase::ServoMotorPololuBase(unsigned short servoID,
 	}
 	pololuCtrl_ = pololuController;
 
+	try{
+		pololuCtrl_->getPosition(servoNmb_);
+	}catch(IException *e){
+		stringstream ss;
+		ss << "ServoMotorPololuBase::constructor: no acces to servo motor ";
+		ss << "having ID " << servoNmb_ << ". Check servo motor ID parameter:";
+		ss << e->getMsg();
+		throw new ExceptionServoMotorBase(ss.str() );
+	}catch(string errMsg){
+		stringstream ss;
+		ss << "ServoMotorPololuBase::constructor: no acces to servo motor ";
+		ss << "having ID " << servoNmb_ << ". Check servo motor ID parameter:";
+		ss << errMsg;
+		throw new ExceptionServoMotorBase(ss.str());
+	}catch(...){
+		stringstream ss;
+		ss << "ServoMotorPololuBase::constructor: no acces to servo motor ";
+		ss << "having ID " << servoNmb_ << ". Check servo motor ID parameter:";
+		ss << "(unknown error).";
+		throw new ExceptionServoMotorBase(ss.str());
+	}
 	return;
 }
 

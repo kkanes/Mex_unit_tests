@@ -26,6 +26,7 @@ void execUnitTests(){
 	TestSuite TS03("closeConnection");
 	TestSuite TS04("getMovingState");
 	TestSuite TS05("constructor");
+	TestSuite TS06("getErrors");
 
 	// add all test suits to the unit
 	unit.addTestItem(&TS01);
@@ -33,6 +34,7 @@ void execUnitTests(){
 	unit.addTestItem(&TS03);
 	unit.addTestItem(&TS04);
 	unit.addTestItem(&TS05);
+	unit.addTestItem(&TS06);
 
 	//
 	// test cases for test suite TS01
@@ -97,11 +99,22 @@ void execUnitTests(){
 	//
 	// test cases for test suite TS05
 	//
-	// create the defined test cases for method initSerialCom to test suite TS04
+	// create the defined test cases for method initSerialCom to test suite TS05
 	TC51 tc51("constructor - call without parameter");
 
-	// add specific test cases to test suite TS04
+	// add specific test cases to test suite TS05
 	TS05.addTestItem(&tc51);
+
+
+	//
+	// test cases for test suite TS06
+	//
+	// create the defined test cases for method initSerialCom to test suite TS06
+	TC61 tc61("getErrors - call with closed communication channel");
+
+	// add specific test cases to test suite TS06
+	TS06.addTestItem(&tc61);
+
 
 
 
@@ -109,6 +122,24 @@ void execUnitTests(){
 	unit.testExecution();
 	unit.writeResultsToFile("UT_Pololu.xml");
 
+}
+
+
+
+
+
+bool TC61::testRun(){// getErrors - call with closed communication channel
+	cout << ".";
+	try{
+		Pololu p("/dev/ttyACM0",9600);
+		p.getErrors();
+		return false;
+	}catch(IException *e){
+		return true;
+	}catch(...){
+		return false;
+	}
+	return false;
 }
 
 
@@ -122,6 +153,7 @@ bool TC51::testRun(){// constructor - call without parameter
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -136,6 +168,7 @@ bool TC41::testRun(){// getMovingState - request after init and before open
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC42::testRun(){// getMovingState - request after open
@@ -150,6 +183,7 @@ bool TC42::testRun(){// getMovingState - request after open
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC43::testRun(){// getMovingState - request  after close
@@ -165,6 +199,7 @@ bool TC43::testRun(){// getMovingState - request  after close
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -182,6 +217,7 @@ bool TC44::testRun(){// getMovingState - request after close and open
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -203,6 +239,7 @@ bool TC31::testRun(){ // closeConnection - repeated close
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC32::testRun(){ // closeConnection - close before open
@@ -216,6 +253,7 @@ bool TC32::testRun(){ // closeConnection - close before open
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -231,6 +269,7 @@ bool TC21::testRun(){ // openConnection - open first
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC22::testRun(){ // openConnection - init open time
@@ -247,6 +286,7 @@ bool TC22::testRun(){ // openConnection - init open time
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC23::testRun(){ // openConnection - repeated open
@@ -263,6 +303,7 @@ bool TC23::testRun(){ // openConnection - repeated open
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC24::testRun(){ // openConnection - try to open wrong channel
@@ -277,6 +318,7 @@ bool TC24::testRun(){ // openConnection - try to open wrong channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -293,6 +335,7 @@ bool TC11::testRun(){ // initConnection - init first
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC12::testRun(){ // initConnection - init second time
@@ -309,6 +352,7 @@ bool TC12::testRun(){ // initConnection - init second time
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC13::testRun(){ // initConnection - repeated init
@@ -327,6 +371,7 @@ bool TC13::testRun(){ // initConnection - repeated init
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 

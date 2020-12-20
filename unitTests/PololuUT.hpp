@@ -16,6 +16,14 @@ namespace UT_Pololu{
 void execUnitTests();
 
 
+class TC61 : public TestCase{
+	TC61() : TestCase(){};
+public:
+	TC61(string s = string("getErrors - call with closed communication channel")) : TestCase(s){};
+	virtual bool testRun(); // getErrors - call with closed communication channel
+};
+
+
 class TC51 : public TestCase{
 	TC51() : TestCase(){};
 public:

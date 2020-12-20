@@ -264,3 +264,54 @@ bool Pololu::getMovingState(){
     }
     return response[0];
 }
+
+
+
+unsigned short Pololu::getErrors(){
+	if(!isComPortOpen_){
+		string msg("getMovingState:: serial communication port is closed");
+		msg += string("First call copenConnection.");
+		throw new ExceptionPololu(msg);
+	}
+
+    /* Generates the command for the controller.
+     * 0xA1 = Pololu command for reading out error flags
+     */
+    unsigned short sizeCommand = 1;
+    unsigned short sizeResponse = 2;
+    unsigned char response[sizeResponse];
+
+    unsigned char command[] = {0xA1};
+
+    int counter = 0;
+    int limit = 5;
+    while(1){
+    	try
+    	{
+    		counter++;
+     		serialCom_->writeSerialCom(command, sizeCommand, response, sizeResponse);
+     		break;
+    	}catch (IException *e){
+    		if(counter < limit){
+    			continue;
+    		};
+    		string msg("getErrors:: error while trying to read error data:");
+    		msg += e->getMsg();
+    		throw new ExceptionPololu(msg);
+    	}catch (std::string &errorMessage){
+       		if(counter < limit){
+        			continue;
+        	};
+    		string msg("getErrors:: error while trying to read error data:");
+    		msg += errorMessage;
+    		throw new ExceptionPololu(msg);
+    	}catch(...){
+       		if(counter < limit){
+        			continue;
+        	};
+    		string msg("getErrors:: unknown error while trying to read error data.");
+    		throw new ExceptionPololu(msg);
+    	}
+    }
+    return response[0] + (256 * response[1]);
+}

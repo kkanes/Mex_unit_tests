@@ -128,8 +128,10 @@ void execUnitTests(){
 	TC71 tc71("constructor - with no communication channel");
 	TC72 tc72("constructor - negative servo motor nmb");
 	TC73 tc73("constructor - negative neutral position values");
-	TC74 tc74("constructor - non positive delta position values");
+	TC74 tc74("constructor - delta value = 0");
 	TC75 tc75("constructor - non matching neutral and delta values");
+	TC76 tc76("constructor - call with no motor connected");
+	TC77 tc77("constructor - call with non existing servo board ID");
 
 
 	// add specific test cases to test suite TS07
@@ -138,7 +140,8 @@ void execUnitTests(){
 	TS07.addTestItem(&tc73);
 	TS07.addTestItem(&tc74);
 	TS07.addTestItem(&tc75);
-
+	TS07.addTestItem(&tc76);
+	TS07.addTestItem(&tc77);
 
 	// execute unit tests
 	unit.testExecution();
@@ -150,6 +153,7 @@ bool TC71::testRun(){ // constructor - with no communication channel
 	try{
 		try{
 			ServoMotorPololuBase m(0,6000,3000,NULL);
+			return false;
 		}catch(IException *e){
 			return true;
 		}catch(...){
@@ -168,21 +172,23 @@ bool TC72::testRun(){ // constructor - negative servo motor nmb
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
 		try{
-			ServoMotorPololuBase m(-1,6000,3000,&p);
+			int srvNmb = -1;
+			ServoMotorPololuBase m(srvNmb,6000,3000,&p);
+			p.getErrors();
+			return false;
 		}catch(IException *e){
-			cout << e->getMsg();
+			p.getErrors();
 			return true;
 		}catch(...){
-			cout << "unknown unexcpected error";
+			p.getErrors();
 			return false;
 		};
 	}catch(IException *e){
-		cout << e->getMsg();
 		return false;
 	}catch(...){
-		cout << "unknown unexcpected error 2";
 		return false;
 	}
+	return false;
 };
 
 bool TC73::testRun(){ // constructor - negative neutral position values
@@ -191,9 +197,15 @@ bool TC73::testRun(){ // constructor - negative neutral position values
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
 		try{
-			ServoMotorPololuBase m(0,-1,3000,&p);
+			int nPos = -1;
+			ServoMotorPololuBase m(0,nPos,3000,&p);
+			if(nPos != m.getMidPosInAbs()){
+				return true;
+			}else{
+				return false;
+			}
 		}catch(IException *e){
-			return true;
+			return false;
 		}catch(...){
 			return false;
 		};
@@ -202,15 +214,17 @@ bool TC73::testRun(){ // constructor - negative neutral position values
 	}catch(...){
 		return false;
 	}
+	return false;
 };
 
-bool TC74::testRun(){ // constructor - non positive delta position values
+bool TC74::testRun(){ // constructor - delta values = 0
 	cout << ".";
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
 		try{
-			ServoMotorPololuBase m(0,6000,0,&p);
+			int delta = 0;
+			ServoMotorPololuBase m(0,delta,3000,&p);
 		}catch(IException *e){
 			return true;
 		}catch(...){
@@ -221,6 +235,7 @@ bool TC74::testRun(){ // constructor - non positive delta position values
 	}catch(...){
 		return false;
 	}
+	return false;
 };
 
 bool TC75::testRun(){ // constructor - non matching neutral and delta values
@@ -228,8 +243,11 @@ bool TC75::testRun(){ // constructor - non matching neutral and delta values
 	try{
 		Pololu p("/dev/ttyACM0",9600);
 		p.openConnection();
+		unsigned short delta = 6001;
+		unsigned short nPos = 6000;
 		try{
-			ServoMotorPololuBase m(0,6000,6000,&p);
+			ServoMotorPololuBase m(0,nPos,delta,&p);
+			return false;
 		}catch(IException *e){
 			return true;
 		}catch(...){
@@ -240,6 +258,54 @@ bool TC75::testRun(){ // constructor - non matching neutral and delta values
 	}catch(...){
 		return false;
 	}
+	return false;
+};
+
+
+bool TC76::testRun(){ // constructor - call with no motor connected
+	cout << ".";
+	try{
+		Pololu p("/dev/ttyACM0",9600);
+		p.openConnection();
+		try{
+			ServoMotorPololuBase m(1,6000,3000,&p); // servo motor board ID must not be
+			                                        // connected to a servo motor
+			return true;
+		}catch(IException *e){
+			return false;
+		}catch(...){
+			return false;
+		};
+	}catch(IException *e){
+		cout << e->getMsg();
+		return false;
+	}catch(...){
+		return false;
+	}
+	return false;
+};
+
+
+bool TC77::testRun(){ // constructor - call with non existing servo board ID
+	cout << ".";
+	try{
+		Pololu p("/dev/ttyACM0",9600);
+		p.openConnection();
+		try{
+			ServoMotorPololuBase m(111,6000,3000,&p); // servo motor board ID must not
+													  // be defined for used board
+			return true;
+		}catch(IException *e){
+			return false;
+		}catch(...){
+			return false;
+		};
+	}catch(IException *e){
+		return false;
+	}catch(...){
+		return false;
+	}
+	return false;
 };
 
 
@@ -269,6 +335,7 @@ bool TC61::testRun(){ // getServoNumber - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -297,6 +364,7 @@ bool TC62::testRun(){ // getServoNumber - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -335,6 +403,7 @@ bool TC51::testRun(){ // getMaxPosInAbs - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -363,6 +432,7 @@ bool TC52::testRun(){ // getMaxdPosInAbs - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -397,6 +467,7 @@ bool TC41::testRun(){ // getMidPosInAbs - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -425,6 +496,7 @@ bool TC42::testRun(){ // getMidPosInAbs - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -456,6 +528,7 @@ bool TC31::testRun(){ // getMinPosInAbs - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -484,6 +557,7 @@ bool TC32::testRun(){ // getMinPosInAbs - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -512,6 +586,7 @@ bool TC21::testRun(){ // getPositionInAbs - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -532,6 +607,7 @@ bool TC22::testRun(){ // getPositionInAbs - with no communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -554,6 +630,7 @@ bool TC23::testRun(){ // getPositionInAbs - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -582,6 +659,7 @@ bool TC11::testRun(){ // setPositionInAbs - having closed communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -602,6 +680,7 @@ bool TC12::testRun(){ // setPositionInAbs - with no communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -625,6 +704,7 @@ bool TC13::testRun(){ // setPositionInAbs - with open communication channel
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -661,6 +741,7 @@ bool TC14::testRun(){ // setPositionInAbs - check the set value within its limit
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 
@@ -685,6 +766,7 @@ bool TC15::testRun(){ // setPositionInAbs - try to set pos value larger then max
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 bool TC16::testRun(){ // setPositionInAbs - try to set pos value smaller then min.
@@ -708,6 +790,7 @@ bool TC16::testRun(){ // setPositionInAbs - try to set pos value smaller then mi
 	}catch(...){
 		return false;
 	}
+	return false;
 }
 
 } // ende namespace UT_ServoMotorBase

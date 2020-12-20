@@ -41,8 +41,8 @@ public:
 class TC74 : public TestCase{
 	TC74() : TestCase(){};
 public:
-	TC74(string s = string("constructor - non positive delta position values")) : TestCase(s){};
-	virtual bool testRun(); // constructor - non positive delta position values
+	TC74(string s = string("constructor - delta value = 0")) : TestCase(s){};
+	virtual bool testRun(); // constructor - delta value = 0
 };
 
 class TC75 : public TestCase{
@@ -52,10 +52,19 @@ public:
 	virtual bool testRun(); // constructor - non matching neutral and delta values
 };
 
+class TC76 : public TestCase{
+	TC76() : TestCase(){};
+public:
+	TC76(string s = string("constructor - call with no motor connected")) : TestCase(s){};
+	virtual bool testRun(); // constructor - call with no motor connected
+};
 
-
-
-
+class TC77 : public TestCase{
+	TC77() : TestCase(){};
+public:
+	TC77(string s = string("constructor - call with non existing servo board ID")) : TestCase(s){};
+	virtual bool testRun(); // constructor - call with non existing servo board ID
+};
 
 class TC61 : public TestCase{
 	TC61() : TestCase(){};
