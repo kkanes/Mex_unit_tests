@@ -74,7 +74,7 @@ void execUnitTests(){
 	// create the defined test cases for method closeSerialCom to test suite TS03
 	TC41 tc41("writeSerialCom - write to closed serial com");
 	TC42 tc42("writeSerialCom - closeSerialCom - write to open com");
-	TC43 tc43("closeSerialCom - closeSerialCom - open, close and open write to serial com");
+	TC43 tc43("writeSerialCom - closeSerialCom - open, close and open write to serial com");
 
 	// add specific test cases to test suite TS03
 	TS04.addTestItem(&tc41);

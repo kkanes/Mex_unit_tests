@@ -25,13 +25,14 @@ void execUnitTests(){
 	TestSuite TS02("openConnection");
 	TestSuite TS03("closeConnection");
 	TestSuite TS04("getMovingState");
+	TestSuite TS05("constructor");
 
 	// add all test suits to the unit
 	unit.addTestItem(&TS01);
 	unit.addTestItem(&TS02);
 	unit.addTestItem(&TS03);
 	unit.addTestItem(&TS04);
-
+	unit.addTestItem(&TS05);
 
 	//
 	// test cases for test suite TS01
@@ -93,11 +94,34 @@ void execUnitTests(){
 	TS04.addTestItem(&tc44);
 
 
+	//
+	// test cases for test suite TS05
+	//
+	// create the defined test cases for method initSerialCom to test suite TS04
+	TC51 tc51("constructor - call without parameter");
+
+	// add specific test cases to test suite TS04
+	TS05.addTestItem(&tc51);
+
+
 
 	// execute unit tests
 	unit.testExecution();
 	unit.writeResultsToFile("UT_Pololu.xml");
 
+}
+
+
+bool TC51::testRun(){// constructor - call without parameter
+	cout << ".";
+	try{
+		//Pololu p;
+		return true;
+	}catch(IException *e){
+		return false;
+	}catch(...){
+		return false;
+	}
 }
 
 

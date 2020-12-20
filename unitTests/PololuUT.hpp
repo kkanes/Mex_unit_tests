@@ -16,6 +16,14 @@ namespace UT_Pololu{
 void execUnitTests();
 
 
+class TC51 : public TestCase{
+	TC51() : TestCase(){};
+public:
+	TC51(string s = string("constructor - call without parameter")) : TestCase(s){};
+	virtual bool testRun(); // constructor - call without parameter
+};
+
+
 class TC11 : public TestCase{
 	TC11() : TestCase(){};
 public:

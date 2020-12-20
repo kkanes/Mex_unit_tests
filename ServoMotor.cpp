@@ -234,13 +234,13 @@ ServoMotorPololuBase::ServoMotorPololuBase(unsigned short servoID,
 										   unsigned short delta,
 										   IPololu  *pololuController){
 
-	if(servoNmb_ < 0){
+	if(servoID < 0){
 		string msg("ServoMotorPololuBase::servo number is negative.");
 		throw new ExceptionServoMotorBase(msg);
 	}
 	servoNmb_ = servoID;
 
-	if(neutralPosition_ < 0){
+	if(neutralPos < 0){
 		string msg("ServoMotorPololuBase:: neutral position is negative.");
 		throw new ExceptionServoMotorBase(msg);
 	}

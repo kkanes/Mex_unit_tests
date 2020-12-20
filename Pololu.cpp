@@ -10,6 +10,10 @@
 #include <string>
 #include <iostream>
 
+Pololu::Pololu(){
+	throw new ExceptionPololu(string("This unparameterized constructor shall not be called."));
+}
+
 
 Pololu::Pololu(const char* portName, unsigned short baudRate){
 	try{
@@ -68,7 +72,7 @@ void Pololu::closeConnection(){
     	throw new ExceptionPololu(string("closeConnection::") + errorMessage);
     }catch(...){
     	isComPortOpen_ = false;
-    	throw new ExceptionPololu(string("closeConnection::Unknown error while executing closeSerial"));
+    	throw new ExceptionPololu(string("closeConnection::Unknown error while executing closeSerial."));
     }
 }
 
@@ -91,8 +95,8 @@ void Pololu::initConnection(const char* portName, unsigned short baudRate){
 
 unsigned short Pololu::setPosition(unsigned short servo, unsigned short goToPosition){
 	if(!isComPortOpen_){
-		string msg("setPosition:: serial communication port is closed");
-		msg += string("First call copenConnection.");
+		string msg("setPosition:: serial communication port is closed. ");
+		msg += string("First call copenConnection methods.");
 		throw new ExceptionPololu(msg);
 	}
 

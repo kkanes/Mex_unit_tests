@@ -112,6 +112,9 @@ friend class ServoMotorPololuBase;
 friend class ServoMotorPololuBaseAdv;
 friend class ServoMotorPololu;
 
+private:
+	Pololu(); // throws just an exception if ever called
+
 protected:
     SerialCom *serialCom_ = nullptr;
     bool isComPortOpen_ = false;

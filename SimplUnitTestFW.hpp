@@ -9,7 +9,7 @@
 #define SIMPLUNITTESTFW_HPP_
 
 #include <iostream>
-
+#include <string>
 #include <fstream>
 
 using namespace std;
