@@ -57,9 +57,12 @@ PololuUT.o:	$(TESTDIR)PololuUT.cpp Pololu.cpp Pololu.hpp
 ServoMotorBaseUT.o:	$(TESTDIR)ServoMotorBaseUT.cpp ServoMotor.cpp ServoMotor.hpp  
 	$(CC) $(INCL) $(CFLAGS) -c  $(TESTDIR)ServoMotorBaseUT.cpp -o $(OBJ)ServoMotorBaseUT.o 	
 	
-unitTest:	unitTest.o TestUnits.o SerialCom.o ServoMotor.o Pololu.o SerialComUT.o PololuUT.o ServoMotorBaseUT.o
+ServoMotorUT.o:	$(TESTDIR)ServoMotorUT.cpp ServoMotor.cpp ServoMotor.hpp  
+	$(CC) $(INCL) $(CFLAGS) -c  $(TESTDIR)ServoMotorUT.cpp -o $(OBJ)ServoMotorUT.o 		
+	
+unitTest:	unitTest.o TestUnits.o SerialCom.o ServoMotor.o Pololu.o SerialComUT.o PololuUT.o ServoMotorBaseUT.o ServoMotorUT.o
 	$(CC) -o unitTest $(OBJ)unitTest.o $(OBJ)TestUnits.o $(OBJ)SerialCom.o $(OBJ)Pololu.o $(OBJ)ServoMotor.o \
-						$(OBJ)SerialComUT.o  $(OBJ)PololuUT.o $(OBJ)ServoMotorBaseUT.o $(LIBS)  $(CFLAGS)
+						$(OBJ)SerialComUT.o  $(OBJ)PololuUT.o $(OBJ)ServoMotorBaseUT.o $(OBJ)ServoMotorUT.o $(LIBS)  $(CFLAGS)
 
 
 #

@@ -12,18 +12,20 @@
 #include "./SerialComUT.hpp"
 #include "./PololuUT.hpp"
 #include "./ServoMotorBaseUT.hpp"
+#include "./ServoMotorUT.hpp"
 
 using namespace std;
 
 int main(){
 
-	bool result, res1, res2, res3;
+	bool result, res1, res2, res3, res4;
 
 	res1 = UT_SerialCom::execUnitTests("UT_SerialCom.xml");
 	res2 = UT_Pololu::execUnitTests("UT_Pololu.xml");
 	res3 = UT_ServoMotorBase::execUnitTests("UT_ServoMotorBase.xml");
+	res4 = UT_ServoMotor::execUnitTests("UT_ServoMotor.xml");
 
-	result = res1 && res2 && res3;
+	result = res1 && res2 && res3 && res4;
 	if(result){
 		cout << "\nAll units tests successfully passed.\n";
 	}else{
