@@ -673,6 +673,7 @@ bool TC12::testRun(){ // setPositionInAbs - with no communication channel
 			m.setPositionInAbs(6000);
 			return false;
 		}catch(IException *e){
+			std::cout <<"setPositionInAbs - with no communication channel"<<e->getMsg()<<std::endl;
 			return true;
 		}catch(...){
 			return false;
@@ -693,19 +694,27 @@ bool TC13::testRun(){ // setPositionInAbs - with open communication channel
 		p.openConnection();
 		ServoMotor m(0,6000,3000,&p);
 		try{
-			short pos = m.getPositionInAbs();
+			short pos =  m.getPositionInAbs();
+			std::cout <<"Das ist die Position: "<<pos<<std::endl;
 			m.setPositionInAbs(pos);
+	
 			return true;
 		}catch(IException *e){
+			
+			std::cout <<"1"<<e->getMsg()<<std::endl;
 			return false;
 		}catch(...){
+			std::cout <<"2"<<std::endl;
 			return false;
 		}
 	}catch(IException *e){
+		std::cout <<"3"<<std::endl;
 		return false;
 	}catch(...){
+		std::cout <<"4"<<std::endl;
 		return false;
 	}
+	std::cout <<"5"<<std::endl;
 	return false;
 }
 

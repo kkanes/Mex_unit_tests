@@ -115,6 +115,13 @@ public:
 };
 
 
+class TC24 : public TestCase{
+	TC24() : TestCase(){};
+public:
+	TC24(string s = string("openSerialCom - false baudrate")) : TestCase(s){};
+	virtual bool testRun(); // "openSerialCom - repeated open
+};
+
 } // namespace UT_SerialCom
 
 #endif /* SERIALCOMUT_HPP_ */

@@ -48,11 +48,13 @@ bool execUnitTests(string xmlFilename){
 	TC21 tc21("openSerialCom - open first");
 	TC22 tc22("openSerialCom - open second time");
 	TC23 tc23("openSerialCom - repeated open");
+	TC24 tc24("openSerialCom - false baudrate");
 
 	// add specific test cases to test suite TS02
 	TS02.addTestItem(&tc21);
 	TS02.addTestItem(&tc22);
 	TS02.addTestItem(&tc23);
+	TS02.addTestItem(&tc24);
 
 	//
 	// test cases for test suite TS03
@@ -290,6 +292,28 @@ bool TC11::testRun(){ // initSerialCom - open first
 		return false;
 	}
 	return false;
+};
+
+
+bool TC24::testRun(){ // openSerialCom -  false baudrate
+	cout << ".";
+	
+	SerialCom b;
+	try{
+		b.initSerialCom("/dev/ttyACM0",115200); // no exceptions expected
+		try{
+			b.openSerialCom();
+			cout << "opened" << endl;
+			return false;
+		}catch(IException *e){
+			return true;
+		}catch(...){
+			return true;
+		}
+	}catch(...){
+		cout << "failure" << endl;
+		return false;
+	}
 };
 
 
